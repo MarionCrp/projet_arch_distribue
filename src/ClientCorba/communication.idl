@@ -1,0 +1,14 @@
+module communication {
+    typedef string Utilisateur;
+ 	typedef sequence<Client> Client;
+ 	
+    interface ServiceCommunication {
+        string donnerUsername(in Client client);
+        
+        string donnerPassword(in Client client);
+        
+        Clients listerAmis();
+        
+        
+    };
+};
