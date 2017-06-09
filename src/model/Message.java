@@ -9,7 +9,7 @@ public class Message {
 
 	private User recipient;
 	private User sender;
-	private String comment;
+	private String content;
 	private Date datetime;
 
 	public Message() 
@@ -17,11 +17,11 @@ public class Message {
 		
 	}
  
-	public Message(User recipient, User sender, String comment, Date datetime) 
+	public Message(User recipient, User sender, String content, Date datetime) 
 	{
 		this.recipient = recipient;
 		this.sender = sender;
-		this.comment = comment;
+		this.content = content;
 		this.datetime = datetime;
 	}
 
@@ -41,12 +41,12 @@ public class Message {
 		this.sender = sender;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getContent() {
+		return content;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public Date getDatetime() {

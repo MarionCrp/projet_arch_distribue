@@ -12,21 +12,21 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import model.User;
+
 @Path("/")
 public class Tier2 {
 	//private static final HashMap<String,String> conditions;
 	
 	//private static final HashMap<String,Integer> temperatures;
 	
-	//private static final Villes villes;
-	
 	//private static User current_user;
 	//private static Users users;
 
 	@GET
-	@Path("inscription")
-	@Produces("text/plain")
-	public boolean inscription (@PathParam("login") String login, @PathParam("password") String password) 
+	//@Path("inscription")
+	//@Produces("text/plain")
+	public User inscription (@PathParam("login") String login, @PathParam("password") String password) 
 	{
 		// Vérification des données en base
         // Appel RMI
@@ -35,17 +35,20 @@ public class Tier2 {
 	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
 		} catch (Exception e){
 			
-		}
-
-		
+		}		
 //         tier_3.search_user(login);
 //         new_user = tier_3.add_new_user(login, password);
 //         if(new_user){
 //        	return true; 
 //         }
-         return true;
+         return new User(login, password);
 	}
 
-
+	@GET
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public String coucou () 
+	{
+		return "coucou";
+	}
 
 }
