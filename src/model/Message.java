@@ -7,7 +7,6 @@ public class Message {
 
 	private User recipient;
 	private User sender;
-	private 
 	
 	public Message() 
 	{
