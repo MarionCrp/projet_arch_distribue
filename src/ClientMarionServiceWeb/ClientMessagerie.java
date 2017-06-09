@@ -20,7 +20,7 @@ public class ClientMessagerie {
 		return serviceMessagerie.path("inscription/" + login + "/" + password).get(String.class);
 	}
 
-	private static User submit_subscription() throws Exception 
+	private static void submit_subscription() throws Exception 
 	{
 		String reponse;
 //		StringBuffer xmlStr;
@@ -33,13 +33,13 @@ public class ClientMessagerie {
 		 */
 //		context = JAXBContext.newInstance(User.class); 
 //		unmarshaller = context.createUnmarshaller();
-
-		reponse = serviceMessagerie.get(String.class);       
+		
+		reponse = serviceMessagerie.path("inscription/" + "Marion" + "/" + "password").get(String.class);    
 
 		/*
 		 ** Création du user (normalement récupéré par Scan)
 		 */
-		return new User("Marion", "password");
+		System.out.println(reponse);
 	}
 
 	public static void main(String args[]) throws Exception 
@@ -47,7 +47,6 @@ public class ClientMessagerie {
 		User new_user;
 		serviceMessagerie = Client.create().resource("http://localhost:8080/Messagerie");
 
-		new_user = submit_subscription();
-		System.out.println("Utilisateur à inscrire : " + new_user.getLogin());
+		submit_subscription();
 	}    
 }

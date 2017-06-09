@@ -17,16 +17,17 @@ import model.User;
 @Path("/")
 public class Tier2 {
 	//private static final HashMap<String,String> conditions;
-	
+
 	//private static final HashMap<String,Integer> temperatures;
-	
+
 	//private static User current_user;
 	//private static Users users;
 
 	@GET
-	//@Path("inscription")
-	//@Produces("text/plain")
-	public User inscription (@PathParam("login") String login, @PathParam("password") String password) 
+	@Path("inscription/{login}")
+	@Produces("text/plain")
+	//TODOOOOO :: Passer plusieurs paramètres.
+	public String inscription (@PathParam("login") String login)
 	{
 		// Vérification des données en base
         // Appel RMI
@@ -34,19 +35,20 @@ public class Tier2 {
 		try {
 	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
 		} catch (Exception e){
-			
-		}		
+
+		}
 //         tier_3.search_user(login);
 //         new_user = tier_3.add_new_user(login, password);
 //         if(new_user){
-//        	return true; 
+//        	return true;
 //         }
-         return new User(login, password);
+		 User new_user = new User(login,"pssword");
+         return new_user.getLogin();
 	}
 
 	@GET
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
-	public String coucou () 
+	public String coucou ()
 	{
 		return "coucou";
 	}
