@@ -45,7 +45,7 @@ public class ClientMessagerie {
 	public static void main(String args[]) throws Exception 
 	{
 		User new_user;
-		serviceMessagerie = Client.create().resource("http://localhost:8080/messagerie");
+		serviceMessagerie = Client.create().resource("http://localhost:8080/Messagerie");
 
 		new_user = submit_subscription();
 		System.out.println("Utilisateur à inscrire : " + new_user.getLogin());
