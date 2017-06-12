@@ -33,16 +33,16 @@ public class Client {
 	
 	//Choix entre se connecter et s'inscrire
 	public String menu_1_SignInOrSignUp(){
-		
+		return "toto";
 	}
 	
 	//Inscription
 	public String form_1_SignUp(){
-		
+		return "toto";
 	}
 	
 	//Connexion
 	public String form_1_SignIn(String userLogin, String userPassword){
-		
+		return "toto";
 	}
 }

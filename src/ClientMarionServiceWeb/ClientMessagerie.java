@@ -6,6 +6,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+
 import model.User;
 
 import com.sun.jersey.api.client.Client;
@@ -41,14 +42,13 @@ public class ClientMessagerie {
 		System.out.println(reponse);
 	}
 	
-	private static void connexion() throws Exception {
+	private static User connexion() throws Exception {
 
 		String reponse;
 		StringBuffer xmlStr;
 		JAXBContext context;       
 		JAXBElement<User> root;       
 		Unmarshaller unmarshaller;
-		System.out.println("toto");
 		
 		//PLANTE ICI ! 
 		reponse = serviceMessagerie.path("connexion/marion/password").get(String.class);
@@ -61,19 +61,18 @@ public class ClientMessagerie {
 		
 		xmlStr = new StringBuffer(reponse);
 		root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
-		System.out.println("toto");
-		System.out.println(root.getValue().getLogin());
-		System.out.println(root.getValue().getPassword());
-		
+		return root.getValue();
 
 		
 	}
 
 	public static void main(String args[]) throws Exception 
 	{
-		User new_user;
+		User current_user;
 		serviceMessagerie = Client.create().resource("http://localhost:8080/Messagerie");
 
-		connexion();
+		current_user = connexion();
+		System.out.println("Utilisateur : " + current_user.getLogin());
+		System.out.println("Mot de passe : " + current_user.getPassword());
 	}    
 }

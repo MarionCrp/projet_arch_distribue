@@ -10,10 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
-import javax.xml.ws.WebServiceContext;
 
 import model.User;
 
@@ -50,16 +48,17 @@ public class Tier2 {
 //				return "Une erreur est survenue lors de l'inscription";
 //		    }
 //		}
-		
+		System.out.println("Toto printn in Tier2");
 		return "Toto";
 	}
 	
 	@GET
 	//@Resource WebServiceContext wsContext;
 	@Path("connexion/{login}/{password}")
-	@Produces("text/plain")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	public User connexion (@PathParam("login") String login, @PathParam("password") String password)
 	{
+		// Find the HttpSession
 		// Vérification des données en base
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
@@ -69,18 +68,19 @@ public class Tier2 {
 
 		}
 //         User current_user = tier_3.search_user(login);
-//		if(!current_user){
-//			return "Cet utilisateur n'existe pas";
-//		} else {
-//	        if(current_user.getPassword().equals(password)){
-//	      	 	return "Connecté avec succès";
-//	        } else {
-//				return "Connexion impossible";
-//		    }
-//		}
-
-		 current_user = new User(login,password);
-         return current_user;
+		User searched_user = new User("marion", "password");
+		if(searched_user == null){
+			// TODO Envoyer message : "Cet utilisateur n'existe pas";
+			return null;
+		} else {
+	        if(searched_user.getPassword().equals(password)){
+	        	// TODO Envoyer message : "Connecté avec succès";
+	        	return current_user;
+	        } else {
+	        	// TODO Envoyer message : "Connexion impossible";
+	        	return null;
+		    }
+		}
 	}
 
 	@GET
