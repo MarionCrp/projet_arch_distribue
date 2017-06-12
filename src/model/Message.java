@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -7,29 +8,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Message")
 public class Message {
 
-	private User recipient;
-	private User sender;
+	private UserImpl recipient;
+	private UserImpl sender;
 	private String content;
-	private Date datetime;
+	private LocalDateTime datetime;
 
 	public Message() 
 	{
 		
 	}
  
-	public Message(User recipient, User sender, String content, Date datetime) 
+	public Message(UserImpl recipient, UserImpl sender, String content) 
 	{
 		this.recipient = recipient;
 		this.sender = sender;
 		this.content = content;
-		this.datetime = datetime;
+		this.datetime = LocalDateTime.now();
 	}
 
 	public User getRecipient() {
 		return recipient;
 	}
 
-	public void setRecipient(User recipient) {
+	public void setRecipient(UserImpl recipient) {
 		this.recipient = recipient;
 	}
 
@@ -37,7 +38,7 @@ public class Message {
 		return sender;
 	}
 
-	public void setSender(User sender) {
+	public void setSender(UserImpl sender) {
 		this.sender = sender;
 	}
 
@@ -49,11 +50,11 @@ public class Message {
 		this.content = content;
 	}
 
-	public Date getDatetime() {
+	public LocalDateTime getDatetime() {
 		return datetime;
 	}
 
-	public void setDatetime(Date datetime) {
+	public void setDatetime(LocalDateTime datetime) {
 		this.datetime = datetime;
 	}
 	
