@@ -5,11 +5,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+
 import messagerie.Tier2;
 
+@XmlRootElement(name = "UserImpl")
 public class UserImpl  extends UnicastRemoteObject implements User, Runnable
 {
 	private static final long serialVersionUID = 1L;
+	private static WebResource serviceMessagerie = null;
 
 	public Tier2 tier2;
 	
@@ -23,6 +30,14 @@ public class UserImpl  extends UnicastRemoteObject implements User, Runnable
 		this.tier2 = tier2;
 		this.login = login;
 		this.password = password;
+	}
+	
+	public Tier2 getTier2() {
+		return tier2;
+	}
+
+	public void setTier2(Tier2 tier2) {
+		this.tier2 = tier2;
 	}
 	
 	public String getLogin() {
@@ -59,6 +74,8 @@ public class UserImpl  extends UnicastRemoteObject implements User, Runnable
 		{
 			try
 			{
+				//serviceMessagerie = Client.create().resource("http://localhost:8080/Messagerie");
+				
 				System.out.println("Que voulez vous ? (se connecter)");
 				System.out.print("> ");
 				String demande = stdin.nextLine();
@@ -72,12 +89,13 @@ public class UserImpl  extends UnicastRemoteObject implements User, Runnable
 					String password = stdin.nextLine();
 					System.out.println("Connexion.");
 					
+					
 					tier2.connecter(login, password);
 				}
 				else if (demande.equals("se déconnecter"))
 				{
 					System.out.println("Vous avez été deconnecté.");
-					tier2.deconnecter(this);
+					//tier3.deconnecter(this);
 				}
 				else if (demande.equals("voir nouveaux messages"))
 				{
