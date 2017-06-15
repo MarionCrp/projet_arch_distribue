@@ -94,12 +94,13 @@ public class Client {
 		Scanner scanner = new Scanner (System.in);
 		String userLogin="";
 		String userPassword="";
-		boolean ok=false;
+		boolean ok1=false;
+		boolean ok2=false;
 		
 		System.out.println("\n\n------------------------------ FORMULAIRE D'INSCRIPTION ------------------------------");
 		System.out.println("Pour s'inscrire, merci de choisir un nom d'utilisateur entre 4 et 20 caractères. ");
 		
-		while(!ok)
+		while(!ok1)
         {
 			//On vérifie que la taille du login est correcte
 			System.out.println("Mon nom d'utilisateur : ");
@@ -112,13 +113,13 @@ public class Client {
                 }
                 else
                 {
-                	ok = true;
+                	ok1 = true;
                 }
         }
 		
 		System.out.println("Merci de choisir un mot de passe entre 6 et 30 caractères. ");
 		
-		while(!ok)
+		while(!ok2)
         {
 			//On vérifie que la taille du mdp est correcte
             	System.out.println("Mon mot de passe : ");
@@ -131,11 +132,11 @@ public class Client {
                 }
                 else
                 {
-                	ok = true;
+                	ok2 = true;
                 }
         }
 		
-		System.out.println("Voici vos identifiants : "+userLogin);
+		System.out.println("Voici vos identifiants : ");
 		System.out.println("Nom d'utilisateur : "+userLogin);
 		System.out.println("Mot de passe : "+userPassword);
 		System.out.println("Notez les bien, nous ne vous les redonnerons pas.");
