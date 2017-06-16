@@ -156,7 +156,8 @@ public class Client {
 	//Connexion
 	public static void form_2_SignIn(String userLogin, String userPassword){
 		Scanner scanner = new Scanner (System.in);
-		boolean ok=false;
+		boolean ok1=false;
+		boolean ok2=false;
 		
 		System.out.println("\n\n------------------------------ Interface de connexion ------------------------------");
 		
@@ -165,7 +166,7 @@ public class Client {
 
 			//saisie user login
 			System.out.println("Pour vous connecter, merci de saisir vos identifiants.");
-			while(!ok)
+			while(!ok1)
 	        {
 				//On vérifie que la taille du login est correcte
 	            	System.out.println("Nom d'utilisateur : ");
@@ -178,12 +179,12 @@ public class Client {
 	                }
 	                else
 	                {
-	                	ok = true;
+	                	ok1 = true;
 	                }
 	        }
 
 	        //saisie user password
-			while(!ok)
+			while(!ok2)
 	        {
 				//On vérifie que la taille du login est correcte
 	            	System.out.println("Mot de passe : ");
@@ -196,7 +197,7 @@ public class Client {
 	                }
 	                else
 	                {
-	                	ok = true;
+	                	ok2 = true;
 	                }
 	        }
 
@@ -211,6 +212,7 @@ public class Client {
 			menu_2_MenuPrincipal(userLogin);
 		}catch(Exception e){
 			System.out.println("Erreur de connexion - CODE 666. Application arrêtée.");
+			System.exit(0);
 		}
 	}
 	
@@ -342,15 +344,125 @@ public class Client {
 	}
 
 	
-	
+	//A TESTER
 	public static void form_3_AddFriend(String userLogin){
+		Scanner scanner = new Scanner (System.in);
+		String friendLogin="";
+		boolean ok1=false;
+		boolean ok2=false;
+		
 		System.out.println("\n\n------------------------------ FORMULAIRE - AJOUTER UN AMI  ------------------------------\n-");
-
+		System.out.println("Pour ajouter un utilisateur en tant qu'ami, merci de saisir son nom d'utilisateur.");
+		
+		while(!ok2)
+        {
+			while(!ok1)
+	        {
+				//On vérifie que la taille du login est correcte
+	        	System.out.println("Ajouter le nom d'utilisateur : ");
+	        	friendLogin = scanner.next();
+	             
+	        	//On vérifie que l'integer est compris entre les options possibles
+	            if(userLogin.length() < 4 || userLogin.length() > 20)
+	            {
+	                System.out.println("La taille du nom d'utilisateur entré n'est pas correcte. Veuillez réssayer.");
+	            }
+	            else
+	            {
+	            	ok1 = true;
+	            }
+	        }
+		
+			try{
+				//MARION - AJOUT AMI ICI
+				
+				
+				System.out.println("Utilisateur "+friendLogin+" ajouté dans votre liste.");
+				//si connexion réussie, go menu 2
+				menu_2_MenuPrincipal(userLogin);
+				ok2=true;
+			}catch(Exception e){
+				System.out.println("Utilisateur inexistant, veuillez réssayer.\n-");
+			}
+        }
 	}
 
 	public static void menu_4_AcceptFriendRequest(String userLogin){
+		
+		Scanner scanner = new Scanner (System.in);
+		int userResponse=-1;
+		boolean ok=false;
 		System.out.println("\n\n------------------------------ MENU - DEMANDES D'AMITIÉ  ------------------------------\n-");
+		System.out.println("Pour accepter une demande d'ajout en liste d'amis, merci de rentrer le numéro corresponsant à la demande.\n-");
+		System.out.println("0 : Quitter l'application.");
+		System.out.println("1 : Revenir au menu principal.\n-");
+		
+		Map<Integer, String> friendRequestList = new HashMap<Integer, String>();
+		
+		ArrayList<String> friendsRequestUserNames = new ArrayList<String>();
+		//MARION - ON RECUPERE LES DEMANDES D'AMI ICI
+		//friendsRequests = 
+		
+		int optionNumber=1;
+		int listKey=-1;
+		for(String friendRequestUserName: friendsRequestUserNames){
+			optionNumber++;//pour l'affichage d'option
+			listKey++;//clé du tableau associatif
+			System.out.println(optionNumber+" : Accepter la demande de "+friendRequestUserName);
+			friendRequestList.put(listKey, friendRequestUserName);
+			
+		}
+		
+		//vérification de l'option
+		while(!ok)
+        {
+			//On vérifie que l'utilisateur entre bien un integer
+            try
+            {
+            	System.out.println("Mon choix : ");
+            	userResponse=scanner.nextInt();
+                 
+            	//On vérifie que l'integer est compris entre les options possibles
+                if(userResponse < 0 || userResponse > optionNumber)
+                {
+                    System.out.println("Choix invalide!");
+                }
+                else
+                {
+                	ok = true;
+                }
+            }
+            catch(InputMismatchException e)
+            {
+                System.out.println("Option inexistante, merci de choisir entre les options précédentes.");
+                scanner.nextLine();
+            }
+        }
+		
+		
+		
+		if(userResponse==0){
+			System.out.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
+        	System.exit(0);
+		}else if(userResponse==1){
+			menu_2_MenuPrincipal(userLogin);
+		}else{
+			//on récupère le nom d'utilisateur dans le hasmap associatif
+			//(peut-être des conditions test à faire ici)
+			String friend = friendRequestList.get(listKey);
+			
 
+			 try{
+				 //MARION - ACCEPTATON DEMANDE AMI ICI (avec friend = Login)
+				 
+				 System.out.println("Utilisateur "+friend+" ajouté à votre liste d'amis.");
+				 menu_2_MenuPrincipal(userLogin);
+			 }catch(Exception e){
+				 System.out.println("Erreur - Demande d'ami - CODE 777. Application arrêtée.");
+				 System.exit(0);
+			 }
+		}
+		
 	}
 	
 	public static void menu_5_TchatWithFriend(String userLogin, String friendUserName){
