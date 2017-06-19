@@ -5,6 +5,8 @@ import java.rmi.registry.Registry;
 
 import model.ServiceInscriptionImpl;
 
+//import model.ServiceInscriptionImpl;
+
 public class Tier3 {
 
 	public static void main (String arg[]) throws Exception{
