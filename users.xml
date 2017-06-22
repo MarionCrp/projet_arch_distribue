@@ -20,4 +20,16 @@
     <login>toto_nouveau</login>
     <password>password</password>
   </user>
+<user>
+    <login>martion</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>totonouveautoto</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>marion</login>
+    <password>password</password>
+  </user>
 </users>

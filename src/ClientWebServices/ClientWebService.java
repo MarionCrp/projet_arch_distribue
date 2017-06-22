@@ -39,8 +39,7 @@ public class ClientWebService {
 	{
 
 		//Connexion à Tier2 - service "controleur" de marion
-		//tier2 = Client.create().resource("http://localhost:8080/Messagerie");
-		Tier2 tier2 = new Tier2();
+		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
 
 		//Lancement de l'application
 		menu_1_SignUp_Or_SignIn();	
@@ -48,7 +47,7 @@ public class ClientWebService {
 	
 	public static void connexion() {
 		//Connexion à Tier2 - service "controleur" de marion
-		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
+		//tier2 = Client.create().resource("http://localhost:8080/Messagerie");
 	}
 	
 	
@@ -161,9 +160,10 @@ public class ClientWebService {
 		JAXBElement<User> root;       
 		Unmarshaller unmarshaller;
 
-		//reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
+		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
+		System.out.println(reponse);
 		Tier2 tier2 = new Tier2();
-		if(tier2.inscription(userLogin, userPassword)){
+		if(Boolean.parseBoolean(tier2.inscription(userLogin, userPassword))){
 			System.out.println("Inscripton réussie avec succès ! ");
 			System.out.println("Voici vos identifiants : ");
 			System.out.println("Nom d'utilisateur : "+userLogin);
@@ -246,9 +246,9 @@ public class ClientWebService {
 			
 			//reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
 			Tier2 tier2 = new Tier2();
-			if(tier2.connexion(userLogin, userPassword)){
-				menu_2_MenuPrincipal(userLogin);
+			if(Boolean.parseBoolean(tier2.connexion(userLogin, userPassword))){
 				System.out.println("Connexion réussie");
+				menu_2_MenuPrincipal(userLogin);
 			}
 			else{
 				System.out.println("La connexion a échoué");
