@@ -6,13 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceInscriptionImpl extends UnicastRemoteObject implements ServiceInscription, Runnable{
+import messagerie.Tier3;
+
+public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 
 	/**
 	 * 
@@ -21,7 +22,7 @@ public class ServiceInscriptionImpl extends UnicastRemoteObject implements Servi
 	
 	private List<User> listUsers = new ArrayList<User>();
 
-	public ServiceInscriptionImpl() throws RemoteException {
+	public Tier3Impl() throws RemoteException {
 		
 	}
 
@@ -69,6 +70,12 @@ public class ServiceInscriptionImpl extends UnicastRemoteObject implements Servi
 			e.printStackTrace();
 		}
 	
+	}
+
+	@Override
+	public void inscrire() throws RemoteException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
