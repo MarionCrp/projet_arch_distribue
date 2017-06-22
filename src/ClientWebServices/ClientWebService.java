@@ -34,13 +34,16 @@ public class ClientWebService {
 	
 	public static void main(String args[]) throws Exception 
 	{
-		//Connexion à Tier2 - service "controleur" de marion
-		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
+		connexion();
 
 		//Lancement de l'application
 		menu_1_SignUp_Or_SignIn();	
 	}
 	
+	public static void connexion() {
+		//Connexion à Tier2 - service "controleur" de marion
+		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
+	}
 	
 	
 	//Choix entre se connecter et s'inscrire
