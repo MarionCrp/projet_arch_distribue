@@ -14,4 +14,14 @@ public class Users
 {
 	@XmlElement
 	public ArrayList<String> liste = new ArrayList<String>();
+	
+	public Users(){
+		
+	}
+	
+	public void addUser(String user_login){
+		this.liste.add(user_login);
+	}
+	
+	
 } 

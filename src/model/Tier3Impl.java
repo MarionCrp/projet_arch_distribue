@@ -42,6 +42,8 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static int connection_id = 0;
+	
 	//private List<User> listUsers = new ArrayList<User>();
 
 	public Tier3Impl() throws RemoteException {
@@ -242,12 +244,11 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					Element parent = (Element) connections_id.item(i).getParentNode();
 					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(login)){
 						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
-							
+							listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
 						}
 					}
 				}
 				return listUsers;
-				
 			}
 		
 		} catch (ParserConfigurationException e) {
@@ -261,9 +262,13 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			e.printStackTrace();
 		}
 		
+		return null;
+	}
+	
+	public boolean addFriend(String friend_login){
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		return false;
 		
-		
-		return listUsers;
 	}
 	
 }
