@@ -12,8 +12,10 @@ import com.sun.jersey.api.client.WebResource;
 
 import java.io.StringReader;
 
+import messagerie.Tier2;
 import model.Message;
 import model.User;
+
 
 
 
@@ -34,7 +36,10 @@ public class ClientWebService {
 	
 	public static void main(String args[]) throws Exception 
 	{
-		connexion();
+
+		//Connexion à Tier2 - service "controleur" de marion
+		//tier2 = Client.create().resource("http://localhost:8080/Messagerie");
+		Tier2 tier2 = new Tier2();
 
 		//Lancement de l'application
 		menu_1_SignUp_Or_SignIn();	
@@ -161,8 +166,9 @@ public class ClientWebService {
 		JAXBElement<User> root;       
 		Unmarshaller unmarshaller;
 
-		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
-
+		//reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
+		Tier2 tier2 = new Tier2();
+		tier2.inscription(userLogin, userPassword);
 		//pause de 5 secondes le temps de les noter puis connexion automatique
 		try {
 			Thread.sleep(5000);

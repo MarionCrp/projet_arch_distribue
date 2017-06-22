@@ -13,9 +13,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
-import model.ServiceInscription;
+import model.Tier3Impl;
 import model.User;
-import model.UserDAO;
+
 
 @Path("/")
 public class Tier2 {
@@ -35,24 +35,23 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
-	         
+	         //Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
+	         Tier3 tier_3 = new Tier3Impl();
 	         // TODO : ELODIE :: Me trouver mon User :p !
 //	         User user = new User(service_inscription);
 //	         Thread thread_user = new Thread(user);
 	         
-	         User searched_user = (User) Tier3.find_user(login);
+	         User searched_user = tier_3.find_user(login);
+	         
 	         if(searched_user != null){
 	 			return "Un utilisateur existe déjà avec ce login";
 	 		} else {
 	 			// Elodie : Ajout de l'utilisateur dans le txt.
-//	 			new_user = tier_3.add_new_user(login, password);
-//	 	        if(new_user){
-//	 	      	 	return "Votre inscription a bien été prise en compte";
-//	 	        } else {
-//	 				return "Une erreur est survenue lors de l'inscription";
-//	 		    }
-	 			return "Votre inscription a bien été prise en compte";
+	 	        if(tier_3.add_new_user(login, password)){
+	 	      	 	return "Votre inscription a bien été prise en compte";
+	 	        } else {
+	 				return "Une erreur est survenue lors de l'inscription";
+	 		    }
 	 		}
 		} catch (Exception e){
 			System.out.println(e);
@@ -71,8 +70,9 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
-	        User searched_user = Tier3.find_user(login);
+	        //Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
+	        Tier3 tier_3 = new Tier3Impl();
+			User searched_user = tier_3.find_user(login);
 	 		if(searched_user == null){
 	 			return "Cet utilisateur n'existe pas";
 	 		} else {
