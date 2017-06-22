@@ -5,12 +5,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import model.User;
+
 
 public interface Tier3 extends Remote{
 
-	public void find_user(String login) throws RemoteException;
+	public User find_user(String login) throws RemoteException;
 	
-	public void inscrire() throws RemoteException;
+	public boolean add_new_user(String login, String password) throws RemoteException;
 	
 	
 }
