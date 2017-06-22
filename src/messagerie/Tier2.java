@@ -35,13 +35,13 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	         ServiceInscription service_inscription = (ServiceInscription) Naming.lookup("rmi://localhost:2000/Messagerie");
+	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
 	         
 	         // TODO : ELODIE :: Me trouver mon User :p !
 //	         User user = new User(service_inscription);
 //	         Thread thread_user = new Thread(user);
 	         
-	         User searched_user = (User) UserDAO.find_user(login);
+	         User searched_user = (User) Tier3.find_user(login);
 	         if(searched_user != null){
 	 			return "Un utilisateur existe déjà avec ce login";
 	 		} else {
@@ -70,22 +70,23 @@ public class Tier2 {
 		// Vérification des données en base
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
-//		try {
-//	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
-//		} catch (Exception e){
-//
-//		}
-		User searched_user = UserDAO.find_user(login);
-		if(searched_user == null){
-			return "Cet utilisateur n'existe pas";
-		} else {
-	        if(searched_user.getPassword().equals(password)){
-	        	return "Connecté avec succès";
-	        } else {
-	        	// TODO Envoyer message : "Connexion impossible";
-	        	return "Le mot de passe est incorrect";
-		    }
+		try {
+	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
+	        User searched_user = Tier3.find_user(login);
+	 		if(searched_user == null){
+	 			return "Cet utilisateur n'existe pas";
+	 		} else {
+	 	        if(searched_user.getPassword().equals(password)){
+	 	        	return "Connecté avec succès";
+	 	        } else {
+	 	        	// TODO Envoyer message : "Connexion impossible";
+	 	        	return "Le mot de passe est incorrect";
+	 		    }
+	 		}
+		} catch (Exception e){
+			return "Une erreur est survenue";
 		}
+		
 	}
 
 	@GET
