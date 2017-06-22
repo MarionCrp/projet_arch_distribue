@@ -23,7 +23,7 @@ public class messageListener extends Thread{
 					if(lastMessageGiven!=""){
 						if(lastMessageGiven!=lastMessageInBase){
 							
-							System.out.println(messageTime+" - "+authorUserName+" : "+lastMessageInBase);
+							//System.out.println(messageTime+" - "+authorUserName+" : "+lastMessageInBase);
 							
 							//on met à jour le dernier message pour le prochain message
 							lastMessageGiven=lastMessageInBase;

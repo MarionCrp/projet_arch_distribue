@@ -15,7 +15,7 @@ import java.io.StringReader;
 import messagerie.Tier2;
 //import model.Message;
 import model.User;
-import ClientWebService.messageListener;
+//import ClientWebService.messageListener;
 
 
 
@@ -30,8 +30,6 @@ import java.util.ArrayList;
 
 public class ClientWebService {
 	
-	//activer les deux premiers import avec "Referenced Librairies" si utile (voir prof)
-	//private static WebResource Tier2 = null;
 	private static WebResource tier2 = null;
 	
 	
@@ -161,9 +159,8 @@ public class ClientWebService {
 		Unmarshaller unmarshaller;
 
 		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
-		System.out.println(reponse);
 		Tier2 tier2 = new Tier2();
-		if(Boolean.parseBoolean(tier2.inscription(userLogin, userPassword))){
+		if(Boolean.parseBoolean(reponse)){
 			System.out.println("Inscripton réussie avec succès ! ");
 			System.out.println("Voici vos identifiants : ");
 			System.out.println("Nom d'utilisateur : "+userLogin);
