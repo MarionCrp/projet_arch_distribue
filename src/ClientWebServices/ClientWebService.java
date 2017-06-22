@@ -243,22 +243,28 @@ public class ClientWebService {
 			JAXBElement<User> root;       
 			Unmarshaller unmarshaller;
 			
-			//PLANTE ICI ! 
-			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
-			System.out.println(reponse);
+			//reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			Tier2 tier2 = new Tier2();
+			if(tier2.connexion(userLogin, userPassword)){
+				menu_2_MenuPrincipal(userLogin);
+				System.out.println("Connexion réussie");
+			}
+			else{
+				System.out.println("La connexion a échoué");
+				form_2_SignIn(userLogin, userPassword);
+			}
 			/*
 			 ** Instanciation du convertiseur XML => Objet Java
 			 */
-			context = JAXBContext.newInstance(User.class); 
-			unmarshaller = context.createUnmarshaller();
-			
-			xmlStr = new StringBuffer(reponse);
-			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
-			System.out.println(root.getValue());
+//			context = JAXBContext.newInstance(User.class); 
+//			unmarshaller = context.createUnmarshaller();
+//			
+//			xmlStr = new StringBuffer(reponse);
+//			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
+//			System.out.println(root.getValue());
 
 
-			//si connexion réussie, go menu 2
-			menu_2_MenuPrincipal(userLogin);
+
 		}catch(Exception e){
 			System.out.println("Erreur de connexion - CODE 666. Application arrêtée.");
 			System.exit(0);
