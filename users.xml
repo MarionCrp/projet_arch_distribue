@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <users>
-  <user>
-    <login>Elodie</login>
-    <password>password</password>
-  </user>
-  <user>
-    <login>test</login>
-    <password>password</password>
-  </user>
-  <user>
-    <login>Marion</login>
-    <password>password</password>
-  </user>
-<user>
-    <login>nouvel_utilisateur</login>
-    <password>password</password>
-  </user>
-<user>
-    <login>toto_nouveau</login>
-    <password>password</password>
-  </user>
-<user>
-    <login>martion</login>
-    <password>password</password>
-  </user>
-<user>
-    <login>totonouveautoto</login>
-    <password>password</password>
-  </user>
+
 <user>
     <login>marion</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>elodie</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>kevin</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>milena</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>david</login>
     <password>password</password>
   </user>
 </users>

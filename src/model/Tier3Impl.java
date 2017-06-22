@@ -7,7 +7,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,26 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	//private List<User> listUsers = new ArrayList<User>();
 
 	public Tier3Impl() throws RemoteException {
+		
+	}
+	
+	public static void main(String[] arg) {
+		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+		try {
+			Registry registry = LocateRegistry.createRegistry(2000);
+			Tier3Impl tier3 = new Tier3Impl();
+			registry.bind("Tier3", tier3);
+			Thread.sleep(99999);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AlreadyBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

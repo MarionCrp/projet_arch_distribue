@@ -30,10 +30,8 @@ import java.util.ArrayList;
 
 public class ClientWebService {
 	
-	//activer les deux premiers import avec "Referenced Librairies" si utile (voir prof)
-	//private static WebResource Tier2 = null;
 	private static WebResource tier2 = null;
-	
+	private static User current_user = null;
 	
 	public static void main(String args[]) throws Exception 
 	{
@@ -161,9 +159,8 @@ public class ClientWebService {
 		Unmarshaller unmarshaller;
 
 		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
-		System.out.println(reponse);
 		Tier2 tier2 = new Tier2();
-		if(Boolean.parseBoolean(tier2.inscription(userLogin, userPassword))){
+		if(Boolean.parseBoolean(reponse)){
 			System.out.println("Inscripton réussie avec succès ! ");
 			System.out.println("Voici vos identifiants : ");
 			System.out.println("Nom d'utilisateur : "+userLogin);
@@ -244,27 +241,16 @@ public class ClientWebService {
 			JAXBElement<User> root;       
 			Unmarshaller unmarshaller;
 			
-			//reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
-			Tier2 tier2 = new Tier2();
-			if(Boolean.parseBoolean(tier2.connexion(userLogin, userPassword))){
+			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			if(Boolean.parseBoolean(reponse)){
 				System.out.println("Connexion réussie");
+				current_user = new User(userLogin, userPassword);
 				menu_2_MenuPrincipal(userLogin);
 			}
 			else{
 				System.out.println("La connexion a échoué");
 				form_2_SignIn(userLogin, userPassword);
 			}
-			/*
-			 ** Instanciation du convertiseur XML => Objet Java
-			 */
-//			context = JAXBContext.newInstance(User.class); 
-//			unmarshaller = context.createUnmarshaller();
-//			
-//			xmlStr = new StringBuffer(reponse);
-//			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
-//			System.out.println(root.getValue());
-
-
 
 		}catch(Exception e){
 			System.out.println("Erreur de connexion - CODE 666. Application arrêtée.");

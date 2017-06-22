@@ -9,6 +9,8 @@ public class messageListener extends Thread{
 	
 	public void run() {
 		String lastMessageInBase = "";
+		String authorUserName;
+		String messageTime;
 		
 		while(!ok){
 			try {
@@ -16,9 +18,9 @@ public class messageListener extends Thread{
 				if(user1!="" && user2!=""){
 					//MARION -- ON RECUPERE LE DERNIER MESSAGE EN BASE pour cette conversation
 					//user1 et user2 te permettent d'avoir les noms d'utilisateur pour savoir dans quelle conversation regarder
-					//messageTime= on récupère le string de l'heure du dernier message
-					//authorUserName = nom de l'auteur du message
-					//lastMessageInBase = on récupère le string du dernier message de la conversation
+					messageTime = "TODO"; //on récupère le string de l'heure du dernier message
+					authorUserName = "TODO"; //nom de l'auteur du message
+					lastMessageInBase = "TODO"; //on récupère le string du dernier message de la conversation
 					
 					if(lastMessageGiven!=""){
 						if(lastMessageGiven!=lastMessageInBase){
