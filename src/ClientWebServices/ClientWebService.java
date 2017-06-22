@@ -153,12 +153,6 @@ public class ClientWebService {
                 	ok2 = true;
                 }
         }
-		
-		System.out.println("Voici vos identifiants : ");
-		System.out.println("Nom d'utilisateur : "+userLogin);
-		System.out.println("Mot de passe : "+userPassword);
-		System.out.println("Notez les bien, nous ne vous les redonnerons pas.");
-		System.out.println("Connexion automatique au chat dans quelques secondes ...");
 
 		String reponse;
 		StringBuffer xmlStr;
@@ -168,13 +162,25 @@ public class ClientWebService {
 
 		//reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
 		Tier2 tier2 = new Tier2();
-		tier2.inscription(userLogin, userPassword);
-		//pause de 5 secondes le temps de les noter puis connexion automatique
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {}
-		
-		form_2_SignIn(userLogin, userPassword);
+		if(tier2.inscription(userLogin, userPassword)){
+			System.out.println("Inscripton réussie avec succès ! ");
+			System.out.println("Voici vos identifiants : ");
+			System.out.println("Nom d'utilisateur : "+userLogin);
+			System.out.println("Mot de passe : "+userPassword);
+			System.out.println("Notez les bien, nous ne vous les redonnerons pas.");
+			System.out.println("Connexion automatique au chat dans quelques secondes ...");
+
+			//pause de 5 secondes le temps de les noter puis connexion automatique
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {}
+			
+			form_2_SignIn(userLogin, userPassword);
+		} else {
+			System.out.println("Erreur lors de l'inscription, veuillez rééssayer ");
+			form_1_SignUp();
+		}
+
 		
 	}
 	

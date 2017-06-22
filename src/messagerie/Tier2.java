@@ -29,7 +29,7 @@ public class Tier2 {
 	@GET
 	@Path("inscription/{login}/{password}")
 	@Produces("text/plain")
-	public String inscription (@PathParam("login") String login, @PathParam("password") String password)
+	public boolean inscription (@PathParam("login") String login, @PathParam("password") String password)
 	{
 		// Vérification des données en base
         // Appel RMI
@@ -42,20 +42,25 @@ public class Tier2 {
 //	         Thread thread_user = new Thread(user);
 	         
 	         User searched_user = tier_3.find_user(login);
+
 	         
 	         if(searched_user != null){
-	 			return "Un utilisateur existe déjà avec ce login";
+	 			//return "Un utilisateur existe déjà avec ce login";
+	        	 return false;
 	 		} else {
 	 			// Elodie : Ajout de l'utilisateur dans le txt.
 	 	        if(tier_3.add_new_user(login, password)){
-	 	      	 	return "Votre inscription a bien été prise en compte";
+	 	      	 	// return "Votre inscription a bien été prise en compte";
+	 	        	return true;
 	 	        } else {
-	 				return "Une erreur est survenue lors de l'inscription";
+	 				//return "Une erreur est survenue lors de l'inscription";
+	 	        	return false;
 	 		    }
 	 		}
 		} catch (Exception e){
 			System.out.println(e);
-			return "Une erreur est survenue";
+			//return "Une erreur est survenue";
+			return false;
 		}
 	}
 	

@@ -12,4 +12,12 @@
     <login>Marion</login>
     <password>password</password>
   </user>
+<user>
+    <login>nouvel_utilisateur</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>toto_nouveau</login>
+    <password>password</password>
+  </user>
 </users>
