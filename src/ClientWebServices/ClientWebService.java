@@ -2,6 +2,7 @@ package ClientWebServices;
 
 //import com.sun.jersey.api.client.Client;
 //import com.sun.jersey.api.client.WebResource;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -15,7 +16,12 @@ import java.io.StringReader;
 import messagerie.Tier2;
 //import model.Message;
 import model.User;
+import model.Users;
 import ClientWebServices.messageListener;
+
+
+
+
 
 
 
@@ -327,60 +333,92 @@ public class ClientWebService {
 		System.out.println("Choisissez une des options suivantes :\n-");
 		System.out.println("0 : Quitter l'application.");
 		System.out.println("1 : Revenir au menu principal.\n-");
-		
 		Map<Integer, String> friendsList = new HashMap<Integer, String>();
 		
 		ArrayList<String> friendsUserNames = new ArrayList<String>();
-		//MARION - ON RECUPERE LES AMIS ICI
-		//friends = 
+		Users friends = new Users();
 		
-		int optionNumber=1;
-		int listKey=-1;
-		for(String friendUserName: friendsUserNames){
-			optionNumber++;//pour l'affichage d'option
-			listKey++;//clé du tableau associatif
-			System.out.println(optionNumber+" : Chatter avec --- "+friendUserName);
-			friendsList.put(listKey, friendUserName);
+		String reponse;
+		StringBuffer xmlStr;
+		JAXBContext context;       
+		JAXBElement<Users> root;       
+		Unmarshaller unmarshaller;
+
+		/*
+		 ** Instanciation du convertiseur XML => Objet Java
+		 */
+		try {
 			
-		}
+			// On récupère les amis
+			context = JAXBContext.newInstance(Users.class);
+			unmarshaller = context.createUnmarshaller();
+			System.out.println(tier2.path("friends_list/" + current_user.getLogin()).get(String.class));
+			
+			reponse = tier2.path("friends_list/" + current_user.getLogin()).get(String.class);
+			/*
+			 ** Traitement de la reponse XML : transformation en une instance de la classe Villes
+			 */
+			xmlStr = new StringBuffer(reponse);
+			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Users.class);
+
+			friends = root.getValue();
+			
+			int optionNumber=1;
+			int listKey=-1;
+			for(int i = 0; i < friends.liste.size(); i++) 
+			{
+				optionNumber++;//pour l'affichage d'option
+				listKey++;//clé du tableau associatif
+				System.out.println(optionNumber+" : Chatter avec --- " + friends.liste.get(i));
+				friendsList.put(listKey, friends.liste.get(i));
+				
+				//vérification de l'option
+				while(!ok)
+		        {
+					//On vérifie que l'utilisateur entre bien un integer
+		            try
+		            {
+		            	System.out.println("Mon choix : ");
+		            	userResponse=scanner.nextInt();
+		                 
+		            	//On vérifie que l'integer est compris entre les options possibles
+		                if(userResponse < 0 || userResponse > optionNumber)
+		                {
+		                    System.out.println("Choix invalide!");
+		                }
+		                else
+		                {
+		                	ok = true;
+		                }
+		            }
+		            catch(InputMismatchException e)
+		            {
+		                System.out.println("Option inexistante, merci de choisir entre les options précédentes.");
+		                scanner.nextLine();
+		            }
+		        }
+				
+				if(userResponse==0){
+					System.out.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
+		        	System.exit(0);
+				}else if(userResponse==1){
+					menu_2_MenuPrincipal(userLogin);
+				}else{
+					//on récupère le nom d'utilisateur dans le hasmap associatif
+					//(peut-être des conditions test à faire ici)
+					String friend = friendsList.get(listKey);
+					menu_5_TchatWithFriend(userLogin, friend);
+				}
+				
+			} 
+		} catch (JAXBException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+
+
 		
-		//vérification de l'option
-		while(!ok)
-        {
-			//On vérifie que l'utilisateur entre bien un integer
-            try
-            {
-            	System.out.println("Mon choix : ");
-            	userResponse=scanner.nextInt();
-                 
-            	//On vérifie que l'integer est compris entre les options possibles
-                if(userResponse < 0 || userResponse > optionNumber)
-                {
-                    System.out.println("Choix invalide!");
-                }
-                else
-                {
-                	ok = true;
-                }
-            }
-            catch(InputMismatchException e)
-            {
-                System.out.println("Option inexistante, merci de choisir entre les options précédentes.");
-                scanner.nextLine();
-            }
-        }
 		
-		if(userResponse==0){
-			System.out.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
-        	System.exit(0);
-		}else if(userResponse==1){
-			menu_2_MenuPrincipal(userLogin);
-		}else{
-			//on récupère le nom d'utilisateur dans le hasmap associatif
-			//(peut-être des conditions test à faire ici)
-			String friend = friendsList.get(listKey);
-			menu_5_TchatWithFriend(userLogin, friend);
-		}
 	}
 
 	//formulaire d'ajout d'ami
