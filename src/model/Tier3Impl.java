@@ -13,6 +13,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -20,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -42,7 +44,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static int connection_id = 0;
+	private static Integer c_id = 0;
 	
 	//private List<User> listUsers = new ArrayList<User>();
 
@@ -265,10 +267,78 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		return null;
 	}
 	
-	public boolean addFriend(String friend_login){
+	public boolean addFriend(String user_login, String friend_login){
+
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		return false;
+		DocumentBuilder docBuilder;
+		try {
+			docBuilder = docFactory.newDocumentBuilder();
+			// Find or Create XML
+			StreamResult result;
+			File xml = new File("connections.xml");
+			Document doc;
+			Element rootElement;
+			
+			if(xml.exists()){
+				result = new StreamResult(xml);
+				doc = docBuilder.parse(xml);
+				rootElement = (Element) doc.getElementsByTagName("connections").item(0);
+			}
+			else {
+				doc = docBuilder.newDocument();
+				result = new StreamResult(new File("connections.xml"));
+				// root elements
+				rootElement = doc.createElement("connections");
+				doc.appendChild(rootElement);
+			}
+			
+			Element connection = doc.createElement("connection");
+			Element connection_id = doc.createElement("id");
+			Element sender_login = doc.createElement("sender_login");
+			Element recipient_login = doc.createElement("recipient_login");
+			Element connection_date = doc.createElement("date");
+			
+			connection_id.setTextContent(connection_id.toString());
+			sender_login.setTextContent(user_login);
+			recipient_login.setTextContent(friend_login);
+			connection_date.setTextContent((new Date()).toString());
+			rootElement.appendChild(connection);
+			connection.appendChild(connection_id);
+			connection.appendChild(sender_login);
+			connection.appendChild(recipient_login);
+			connection.appendChild(connection_date);
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			
+			transformer.transform(source, result);
+
+			System.out.println("File saved!");
+
+			c_id = new Integer(c_id +1);
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		
+		return true;
 	}
 	
 }
