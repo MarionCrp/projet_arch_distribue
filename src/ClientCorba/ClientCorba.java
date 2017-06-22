@@ -22,9 +22,9 @@ public class ClientCorba {
 		props.put("org.omg.CORBA.ORBInitialHost", "127.0.0.1");
 		ORB requestBroker = ORB.init((String[]) null, props);
 		
-		org.omg.CORBA.Object namingServiceRef = requestBroker.resolve_initial_references("NameService");
-		NamingContextExt namingContext = NamingContextExtHelper.narrow(namingServiceRef);
+		//org.omg.CORBA.Object namingServiceRef = requestBroker.resolve_initial_references("NameService");
+		//NamingContextExt namingContext = NamingContextExtHelper.narrow(namingServiceRef);
 
-		ServiceCommunication tier2 = ServiceCommunicationHelper.narrow(namingContext.resolve_str("ServiceCommunication"));
+		//ServiceCommunication tier2 = ServiceCommunicationHelper.narrow(namingContext.resolve_str("ServiceCommunication"));
 	}
 }
