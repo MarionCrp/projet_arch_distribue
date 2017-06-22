@@ -254,7 +254,6 @@ public class ClientWebService {
 	}
 	
 	
-	
 	//Menu principal, une fois connecté
 	public static void menu_2_MenuPrincipal(String userLogin){
 		
@@ -313,8 +312,7 @@ public class ClientWebService {
 	}
 
 
-
-
+	//affichage de la liste d'amis / proposition de tchat avec eux
 	public static void menu_3_FriendsList(String userLogin){
 		Scanner scanner = new Scanner (System.in);
 		int userResponse=-1;
@@ -380,8 +378,7 @@ public class ClientWebService {
 		}
 	}
 
-	
-	//A TESTER
+	//formulaire d'ajout d'ami
 	public static void form_3_AddFriend(String userLogin){
 		Scanner scanner = new Scanner (System.in);
 		String friendLogin="";
@@ -424,6 +421,7 @@ public class ClientWebService {
         }
 	}
 
+	//formulaire d'acceptation de demandes d'ajout ami
 	public static void menu_4_AcceptFriendRequest(String userLogin){
 		
 		Scanner scanner = new Scanner (System.in);
@@ -476,8 +474,6 @@ public class ClientWebService {
             }
         }
 		
-		
-		
 		if(userResponse==0){
 			System.out.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
         	System.exit(0);
@@ -502,14 +498,36 @@ public class ClientWebService {
 		
 	}
 	
+	//affichage des derniers messages avec cet utilisateur + appel à la fonction d'écriture/lecture des messages
 	public static void menu_5_TchatWithFriend(String userLogin, String friendUserName){
 		System.out.println("\n\n------------------------------ CHAT AVEC "+friendUserName+"  ------------------------------\n-");
-
-	}
-
-	public static void form_4_SendMessage(String userLogin, String friendLogin){
+		//System.out.println("(Pour revenir au menu principal, entrez ''QUITTER'')");
+		//MARION - On affiche les 10 derniers messages ----> heureMessage" - "+userName+ " - "+message
 		
-
+		form_4_SendMessage(userLogin, friendUserName);
 	}
+
 	
+	public static void form_4_SendMessage(String userLogin, String friendLogin){
+		Scanner scanner = new Scanner (System.in);
+		String userMessage="";
+		
+		
+		while(userMessage!="QUITTER")
+        {
+			
+			
+			
+			
+        	
+        	userMessage = scanner.next();
+                 
+            	
+        }
+		
+		if(userMessage=="QUITTER"){
+			menu_2_MenuPrincipal(userLogin);
+		}
+		
+	}
 }
