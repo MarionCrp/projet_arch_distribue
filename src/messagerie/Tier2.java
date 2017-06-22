@@ -107,4 +107,5 @@ public class Tier2 {
 		friends.liste.add("toto3");
 		return friends;
 	}
+
 }
