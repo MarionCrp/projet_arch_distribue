@@ -6,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import model.User;
+import model.Users;
 
 
 public interface Tier3 extends Remote{
@@ -14,5 +15,6 @@ public interface Tier3 extends Remote{
 	
 	public boolean add_new_user(String login, String password) throws RemoteException;
 	
-	
+	public Users friends_list(String login) throws RemoteException;
+
 }

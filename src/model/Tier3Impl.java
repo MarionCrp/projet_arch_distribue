@@ -39,7 +39,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private List<User> listUsers = new ArrayList<User>();
+	//private List<User> listUsers = new ArrayList<User>();
 
 	public Tier3Impl() throws RemoteException {
 		
@@ -52,7 +52,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		ObjectInputStream fileIn = null;
 		List<User> oldListUsers;
 		ObjectOutputStream fileOut = null;
-		try {
+		/*try {
 			fileIn = new ObjectInputStream(new FileInputStream("inscrits.txt"));
 			oldListUsers = (List<User>) fileIn.readObject();
 				for (User u : listUsers){
@@ -81,7 +81,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	
 	}
 
@@ -194,5 +194,53 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		return null;
 	}
 	
+	@Override
+	public Users friends_list(String login) throws RemoteException {
+		
+		Users listUsers = new Users();
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			
+			// Find or Create XML
+			StreamResult result;
+			File xml = new File("connections.xml");
+			Document doc;
+			Element rootElement;
+			
+			if(xml.exists()){
+				result = new StreamResult(xml);
+				doc = docBuilder.parse(xml);
+				rootElement = (Element) doc.getElementsByTagName("connections").item(0);
+				
+				NodeList connections_id = doc.getElementsByTagName("id");
+				for(int i = 0; i < connections_id.getLength(); i++){
+					Element parent = (Element) connections_id.item(i).getParentNode();
+					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(login)){
+						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
+							
+						}
+					}
+				}
+				return listUsers;
+				
+			}
+		
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		return listUsers;
+	}
 	
 }
