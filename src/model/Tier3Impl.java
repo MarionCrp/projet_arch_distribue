@@ -87,26 +87,75 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 
 	@Override
 	public boolean add_new_user(String login, String password) throws RemoteException {
-		
-//		if (!listUsers.contains(user)){
-//			listUsers.add(user);
-//			System.out.println("L'utilisateur " + user.getLogin() + " a bien été inscrit.");
-//		}
-		
-		this.read_xml(login, password);
+
+		User existing_user = (User) this.find_user(login);
+		if (existing_user == null){
+			try {
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				
+				// Find or Create XML
+				StreamResult result;
+				File xml = new File("users.xml");
+				Document doc;
+				Element rootElement;
+				
+				if(xml.exists()){
+					result = new StreamResult(xml);
+					doc = docBuilder.parse(xml);
+					rootElement = (Element) doc.getElementsByTagName("users").item(0);
+				}
+				else {
+					doc = docBuilder.newDocument();
+					result = new StreamResult(new File("users.xml"));
+					// root elements
+					rootElement = doc.createElement("users");
+					doc.appendChild(rootElement);
+				}
+				
+				Element user = doc.createElement("user");
+				Element user_login = doc.createElement("login");
+				Element user_password = doc.createElement("password");
+				
+				user_login.setTextContent(login);
+				user_password.setTextContent(password);
+				rootElement.appendChild(user);
+				user.appendChild(user_login);
+				user.appendChild(user_password);
+					
+				// write the content into xml file
+				TransformerFactory transformerFactory = TransformerFactory.newInstance();
+				Transformer transformer = transformerFactory.newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+				DOMSource source = new DOMSource(doc);
+				
+				transformer.transform(source, result);
+
+				System.out.println("File saved!");
+
+			  } catch (ParserConfigurationException pce) {
+				pce.printStackTrace();
+			  } catch (TransformerException tfe) {
+				tfe.printStackTrace();
+			  } catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
+			return true;
+		} else {
+			System.out.println("L'utilisateur " + existing_user.getLogin() + " existe déjà.");
+			return false;
+		}
 		
-		
-		return true;
 	}
 
 	@Override
 	public User find_user(String login) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	private void read_xml(String login, String password){
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -114,7 +163,6 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			// Find or Create XML
 			StreamResult result;
 			File xml = new File("users.xml");
-			System.out.println(xml);
 			Document doc;
 			Element rootElement;
 			
@@ -122,43 +170,20 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				result = new StreamResult(xml);
 				doc = docBuilder.parse(xml);
 				rootElement = (Element) doc.getElementsByTagName("users").item(0);
-				System.out.println("Je passe dedans");
-				System.out.println("rootelemen: " + rootElement);
-				System.out.println("resut" + result);
-			}
-			else {
-				doc = docBuilder.newDocument();
-				result = new StreamResult(new File("users.xml"));
-				// root elements
-				rootElement = doc.createElement("users");
-				doc.appendChild(rootElement);
-			}
-			
-			Element user = doc.createElement("user");
-			Element user_login = doc.createElement("login");
-			Element user_password = doc.createElement("password");
-			
-			user_login.setTextContent(login);
-			user_password.setTextContent(password);
-			rootElement.appendChild(user);
-			user.appendChild(user_login);
-			user.appendChild(user_password);
 				
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			DOMSource source = new DOMSource(doc);
-			
-			transformer.transform(source, result);
-
-			System.out.println("File saved!");
-
+				NodeList logins = doc.getElementsByTagName("login");
+				for(int i = 0; i < logins.getLength(); i++){
+					if(logins.item(i).getTextContent().equals(login)){						
+						Element parent = (Element) logins.item(i).getParentNode();
+						String password = parent.getElementsByTagName("password").item(0).getTextContent();
+						User user = new User(login, password);
+						return user;
+					}
+				}
+				return null;
+			}
 		  } catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
-		  } catch (TransformerException tfe) {
-			tfe.printStackTrace();
 		  } catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,7 +191,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+		return null;
 	}
 	
 	

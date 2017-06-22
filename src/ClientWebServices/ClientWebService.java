@@ -154,12 +154,6 @@ public class ClientWebService {
                 	ok2 = true;
                 }
         }
-		
-		System.out.println("Voici vos identifiants : ");
-		System.out.println("Nom d'utilisateur : "+userLogin);
-		System.out.println("Mot de passe : "+userPassword);
-		System.out.println("Notez les bien, nous ne vous les redonnerons pas.");
-		System.out.println("Connexion automatique au chat dans quelques secondes ...");
 
 		String reponse;
 		StringBuffer xmlStr;
@@ -169,13 +163,25 @@ public class ClientWebService {
 
 		//reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
 		Tier2 tier2 = new Tier2();
-		tier2.inscription(userLogin, userPassword);
-		//pause de 5 secondes le temps de les noter puis connexion automatique
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {}
-		
-		form_2_SignIn(userLogin, userPassword);
+		if(tier2.inscription(userLogin, userPassword)){
+			System.out.println("Inscripton réussie avec succès ! ");
+			System.out.println("Voici vos identifiants : ");
+			System.out.println("Nom d'utilisateur : "+userLogin);
+			System.out.println("Mot de passe : "+userPassword);
+			System.out.println("Notez les bien, nous ne vous les redonnerons pas.");
+			System.out.println("Connexion automatique au chat dans quelques secondes ...");
+
+			//pause de 5 secondes le temps de les noter puis connexion automatique
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {}
+			
+			form_2_SignIn(userLogin, userPassword);
+		} else {
+			System.out.println("Erreur lors de l'inscription, veuillez rééssayer ");
+			form_1_SignUp();
+		}
+
 		
 	}
 	
@@ -238,22 +244,28 @@ public class ClientWebService {
 			JAXBElement<User> root;       
 			Unmarshaller unmarshaller;
 			
-			//PLANTE ICI ! 
-			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
-			System.out.println(reponse);
+			//reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			Tier2 tier2 = new Tier2();
+			if(tier2.connexion(userLogin, userPassword)){
+				menu_2_MenuPrincipal(userLogin);
+				System.out.println("Connexion réussie");
+			}
+			else{
+				System.out.println("La connexion a échoué");
+				form_2_SignIn(userLogin, userPassword);
+			}
 			/*
 			 ** Instanciation du convertiseur XML => Objet Java
 			 */
-			context = JAXBContext.newInstance(User.class); 
-			unmarshaller = context.createUnmarshaller();
-			
-			xmlStr = new StringBuffer(reponse);
-			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
-			System.out.println(root.getValue());
+//			context = JAXBContext.newInstance(User.class); 
+//			unmarshaller = context.createUnmarshaller();
+//			
+//			xmlStr = new StringBuffer(reponse);
+//			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
+//			System.out.println(root.getValue());
 
 
-			//si connexion réussie, go menu 2
-			menu_2_MenuPrincipal(userLogin);
+
 		}catch(Exception e){
 			System.out.println("Erreur de connexion - CODE 666. Application arrêtée.");
 			System.exit(0);
