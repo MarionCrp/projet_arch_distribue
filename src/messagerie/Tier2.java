@@ -13,7 +13,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import model.ServiceInscription;
 import model.User;
+import model.UserDAO;
 
 @Path("/")
 public class Tier2 {
@@ -33,52 +35,55 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
+	         ServiceInscription service_inscription = (ServiceInscription) Naming.lookup("rmi://localhost:2000/Messagerie");
+	         
+	         // TODO : ELODIE :: Me trouver mon User :p !
+//	         User user = new User(service_inscription);
+//	         Thread thread_user = new Thread(user);
+	         
+	         User searched_user = (User) UserDAO.find_user(login);
+	         if(searched_user != null){
+	 			return "Un utilisateur existe déjà avec ce login";
+	 		} else {
+	 			// Elodie : Ajout de l'utilisateur dans le txt.
+//	 			new_user = tier_3.add_new_user(login, password);
+//	 	        if(new_user){
+//	 	      	 	return "Votre inscription a bien été prise en compte";
+//	 	        } else {
+//	 				return "Une erreur est survenue lors de l'inscription";
+//	 		    }
+	 			return "Votre inscription a bien été prise en compte";
+	 		}
 		} catch (Exception e){
-
+			System.out.println(e);
+			return "Une erreur est survenue";
 		}
-//         User user = tier_3.search_user(login);
-//		if(user){
-//			return "Un utilisateur existe déjà avec ce login";
-//		} else {
-//			new_user = tier_3.add_new_user(login, password);
-//	        if(new_user){
-//	      	 	return "Votre inscription a bien été prise en compte";
-//	        } else {
-//				return "Une erreur est survenue lors de l'inscription";
-//		    }
-//		}
-		System.out.println("Toto printn in Tier2");
-		return "Toto";
 	}
 	
 	@GET
 	//@Resource WebServiceContext wsContext;
 	@Path("connexion/{login}/{password}")
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
-	public User connexion (@PathParam("login") String login, @PathParam("password") String password)
+	public String connexion (@PathParam("login") String login, @PathParam("password") String password)
 	{
 		// Find the HttpSession
 		// Vérification des données en base
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
-		try {
-	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
-		} catch (Exception e){
-
-		}
-//         User current_user = tier_3.search_user(login);
-		User searched_user = new User("marion", "password");
+//		try {
+//	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
+//		} catch (Exception e){
+//
+//		}
+		User searched_user = UserDAO.find_user(login);
 		if(searched_user == null){
-			// TODO Envoyer message : "Cet utilisateur n'existe pas";
-			return null;
+			return "Cet utilisateur n'existe pas";
 		} else {
 	        if(searched_user.getPassword().equals(password)){
-	        	// TODO Envoyer message : "Connecté avec succès";
-	        	return current_user;
+	        	return "Connecté avec succès";
 	        } else {
 	        	// TODO Envoyer message : "Connexion impossible";
-	        	return null;
+	        	return "Le mot de passe est incorrect";
 		    }
 		}
 	}
@@ -89,5 +94,4 @@ public class Tier2 {
 	{
 		return "coucou";
 	}
-
 }

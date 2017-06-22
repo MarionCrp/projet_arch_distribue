@@ -6,9 +6,18 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+
 import java.io.StringReader;
+
 import model.Message;
 import model.User;
+
+
+
+
 //import model.Users;
 import java.util.Scanner; 
 import java.util.InputMismatchException;
@@ -16,16 +25,17 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-public class Client {
+public class ClientWebService {
 	
 	//activer les deux premiers import avec "Referenced Librairies" si utile (voir prof)
 	//private static WebResource Tier2 = null;
+	private static WebResource tier2 = null;
 	
 	
 	public static void main(String args[]) throws Exception 
 	{
 		//Connexion à Tier2 - service "controleur" de marion
-		//serviceMeteo = Client.create().resource("http://localhost:8080/meteo");
+		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
 
 		//Lancement de l'application
 		menu_1_SignUp_Or_SignIn();	
@@ -142,7 +152,13 @@ public class Client {
 		System.out.println("Notez les bien, nous ne vous les redonnerons pas.");
 		System.out.println("Connexion automatique au chat dans quelques secondes ...");
 
-		//MARION - INSCRIPTION ICI
+		String reponse;
+		StringBuffer xmlStr;
+		JAXBContext context;       
+		JAXBElement<User> root;       
+		Unmarshaller unmarshaller;
+
+		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
 
 		//pause de 5 secondes le temps de les noter puis connexion automatique
 		try {
@@ -206,7 +222,25 @@ public class Client {
 		//Zone de connexion
 		System.out.println("Connexion en cours ...");
 		try{
-			//MARION - CONNEXION ICI
+			String reponse;
+			StringBuffer xmlStr;
+			JAXBContext context;       
+			JAXBElement<User> root;       
+			Unmarshaller unmarshaller;
+			
+			//PLANTE ICI ! 
+			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			System.out.println(reponse);
+			/*
+			 ** Instanciation du convertiseur XML => Objet Java
+			 */
+			context = JAXBContext.newInstance(User.class); 
+			unmarshaller = context.createUnmarshaller();
+			
+			xmlStr = new StringBuffer(reponse);
+			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), User.class);
+			System.out.println(root.getValue());
+
 
 			//si connexion réussie, go menu 2
 			menu_2_MenuPrincipal(userLogin);
