@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBElement;
 
 import model.Tier3Impl;
 import model.User;
+import model.Users;
 
 
 @Path("/")
@@ -93,5 +94,17 @@ public class Tier2 {
 			return "false";
 		}
 		
+	}
+	
+	@GET
+	@Path("friends_list/{current_user_login}")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public Users friends_list (@PathParam("current_user_login") String current_user_login) 
+	{
+		Users friends = new Users();
+		friends.liste.add("toto1");
+		friends.liste.add("toto2");
+		friends.liste.add("toto3");
+		return friends;
 	}
 }
