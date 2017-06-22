@@ -5,4 +5,20 @@
     <login>marion</login>
     <password>password</password>
   </user>
+<user>
+    <login>elodie</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>kevin</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>milena</login>
+    <password>password</password>
+  </user>
+<user>
+    <login>david</login>
+    <password>password</password>
+  </user>
 </users>

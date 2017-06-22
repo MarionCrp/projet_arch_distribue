@@ -37,10 +37,7 @@ public class Tier2 {
 		try {
 			
 	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-	         //Tier3 tier_3 = new Tier3Impl();
-	         // TODO : ELODIE :: Me trouver mon User :p !
-	         
-	         
+
 	         User searched_user = tier_3.find_user(login);
 
 	         
@@ -67,7 +64,7 @@ public class Tier2 {
 	@GET
 	//@Resource WebServiceContext wsContext;
 	@Path("connexion/{login}/{password}")
-	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	@Produces( { "text/plain" } )
 	public String connexion (@PathParam("login") String login, @PathParam("password") String password)
 	{
 		// Find the HttpSession
@@ -75,7 +72,7 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Messagerie");
+	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 	        //Tier3 tier_3 = new Tier3Impl();
 			User searched_user = tier_3.find_user(login);
 	 		if(searched_user == null){
@@ -96,12 +93,5 @@ public class Tier2 {
 			return "false";
 		}
 		
-	}
-
-	@GET
-	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
-	public String coucou ()
-	{
-		return "coucou";
 	}
 }
