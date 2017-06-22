@@ -13,8 +13,9 @@ import com.sun.jersey.api.client.WebResource;
 import java.io.StringReader;
 
 import messagerie.Tier2;
-import model.Message;
+//import model.Message;
 import model.User;
+import ClientWebService.messageListener;
 
 
 
@@ -507,31 +508,44 @@ public class ClientWebService {
 	//affichage des derniers messages avec cet utilisateur + appel à la fonction d'écriture/lecture des messages
 	public static void menu_5_TchatWithFriend(String userLogin, String friendUserName){
 		System.out.println("\n\n------------------------------ CHAT AVEC "+friendUserName+"  ------------------------------\n-");
-		//System.out.println("(Pour revenir au menu principal, entrez ''QUITTER'')");
-		//MARION - On affiche les 10 derniers messages ----> heureMessage" - "+userName+ " - "+message
+		System.out.println("\n-----\n(Pour revenir au menu principal, entrez ''QUITTER'')");
 		
-		form_4_SendMessage(userLogin, friendUserName);
+		String lastMessage = "";
+		//MARION METTRE LA FONCTION, il faut qu'elle affiche les 10 derniers message et qu'elle retourne le dernier message en string
+		//lastMessage = tafonction();
+		//résultat du type System.out.println(messageTime+" - "+authorUserName+" : "+lastMessageInBase);
+		
+		form_4_SendMessage(userLogin, friendUserName, lastMessage);
 	}
 
 	
-	public static void form_4_SendMessage(String userLogin, String friendLogin){
+	public static void form_4_SendMessage(String userLogin, String friendLogin, String lastMessage){
 		Scanner scanner = new Scanner (System.in);
 		String userMessage="";
 		
+		// création d'une instance du thread
+		messageListener thread = new messageListener();
+		thread.setUser1(userLogin);
+		thread.setUser2(friendLogin);
+		
+		//on envoi le dernier message envoyé au thread
+		if(lastMessage!=""){
+			thread.setLastMessageGiven(lastMessage);
+		}
+		
+		
+	    // Activation du thread
+	    thread.start();
 		
 		while(userMessage!="QUITTER")
         {
-			
-			
-			
-			
-        	
-        	userMessage = scanner.next();
-                 
-            	
+			//On vérifie que la taille du login est correcte
+	    	System.out.println("Votre message : ");
+	    	userMessage = scanner.next();
         }
 		
 		if(userMessage=="QUITTER"){
+			thread.quitter();
 			menu_2_MenuPrincipal(userLogin);
 		}
 		
