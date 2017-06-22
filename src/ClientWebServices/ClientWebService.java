@@ -15,7 +15,7 @@ import java.io.StringReader;
 import messagerie.Tier2;
 //import model.Message;
 import model.User;
-//import ClientWebService.messageListener;
+import ClientWebServices.messageListener;
 
 
 
@@ -557,6 +557,5 @@ public class ClientWebService {
 			thread.quitter();
 			menu_2_MenuPrincipal(userLogin);
 		}
-		
 	}
 }
