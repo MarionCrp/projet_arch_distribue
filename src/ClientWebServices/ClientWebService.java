@@ -443,23 +443,25 @@ public class ClientWebService {
 				//On vérifie que la taille du login est correcte
 	        	System.out.println("Ajouter le nom d'utilisateur : ");
 	        	friendLogin = scanner.next();
-	             
-	        	//On vérifie que l'integer est compris entre les options possibles
-	            if(userLogin.length() < 4 || userLogin.length() > 20)
-	            {
-	                System.out.println("La taille du nom d'utilisateur entré n'est pas correcte. Veuillez réssayer.");
-	            }
-	            else
+	        	
+	        	// On vérifie que l'utilisateur fait bien parti de la liste
+	        	if(!users.liste.contains(friendLogin)){
+	        		System.out.println("L'utilisateur n'est pas dans la liste !");
+	        	}
+	        	else
 	            {
 	            	ok1 = true;
 	            }
 	        }
 		
 			try{
-				//MARION - AJOUT AMI ICI
 				
-				
-				System.out.println("Utilisateur "+friendLogin+" ajouté dans votre liste.");
+				if(Boolean.parseBoolean(tier2.addFriend(current_user.getLogin(), friendLogin))){
+					System.out.println("Demande d'ami envoyé à "+friendLogin);
+				} else {
+					System.out.println("Erreur lors de l'envoie de demande de connexion");
+				}
+
 				//si connexion réussie, go menu 2
 				menu_2_MenuPrincipal(userLogin);
 				ok2=true;

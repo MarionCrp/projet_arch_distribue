@@ -21,4 +21,8 @@
     <login>david</login>
     <password>password</password>
   </user>
+<user>
+    <login>mariontest</login>
+    <password>password</password>
+  </user>
 </users>

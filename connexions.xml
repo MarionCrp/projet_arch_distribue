@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<connexions>
+
+<connexion>
+    <id>1</id>
+    <sender_login>marion</sender_login>
+    <recipient_login>elodie</recipient_login>
+    <date>Fri Jun 23 15:42:51 CEST 2017</date>
+  </connexion>
+<connexion>
+    <id>1</id>
+    <sender_login>marion</sender_login>
+    <recipient_login>milena</recipient_login>
+    <date>Fri Jun 23 15:43:00 CEST 2017</date>
+  </connexion>
+</connexions>

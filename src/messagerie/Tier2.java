@@ -128,4 +128,16 @@ public class Tier2 {
 
 	}
 
+	public String addFriend(String current_user_login, String friendLogin) {
+		try {
+			Tier3 tier3 = new Tier3Impl();
+			tier3.addFriend(current_user_login, friendLogin);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
 }
