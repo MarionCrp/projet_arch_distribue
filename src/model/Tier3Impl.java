@@ -222,7 +222,52 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	}
 	
 	@Override
-	public Users friends_list(String login) throws RemoteException {
+	public Users users_list(String current_user_login) throws RemoteException {
+		
+		Users listUsers = new Users();
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			
+			// Find or Create XML
+			StreamResult result;
+			File xml = new File("users.xml");
+			Document doc;
+			Element rootElement;
+			
+			if(xml.exists()){
+				result = new StreamResult(xml);
+				doc = docBuilder.parse(xml);
+				
+				NodeList logins = doc.getElementsByTagName("login");
+				for(int i = 0; i < logins.getLength(); i++){
+					if(!logins.item(i).getTextContent().equals(current_user_login)){						
+						listUsers.addUser(logins.item(i).getTextContent());
+					}
+				}
+				
+				// TODO : Enlever les utilisateurs qui sont déjà connecté à l'utilisateur.
+
+				return listUsers;
+			}
+		
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Users friends_list(String current_user_login) throws RemoteException {
 		
 		Users listUsers = new Users();
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -244,7 +289,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				NodeList connections_id = doc.getElementsByTagName("id");
 				for(int i = 0; i < connections_id.getLength(); i++){
 					Element parent = (Element) connections_id.item(i).getParentNode();
-					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(login)){
+					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
 						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
 							listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
 						}
@@ -253,17 +298,9 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				return listUsers;
 			}
 		
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e){
+			
 		}
-		
 		return null;
 	}
 	

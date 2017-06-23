@@ -1,6 +1,7 @@
 package messagerie;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
@@ -106,6 +107,25 @@ public class Tier2 {
 		friends.liste.add("toto2");
 		friends.liste.add("toto3");
 		return friends;
+	}
+	
+	@GET
+	@Path("users/{current_user_login}")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public Users users_list (@PathParam("current_user_login") String current_user_login) 
+	{
+		Tier3 tier3;
+		try {
+			tier3 = new Tier3Impl();
+			Users users = tier3.users_list(current_user_login);
+			System.out.println(users);
+			return users;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 }

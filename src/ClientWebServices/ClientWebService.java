@@ -426,6 +426,13 @@ public class ClientWebService {
 		boolean ok1=false;
 		boolean ok2=false;
 		
+		Users users = tier2.users_list(current_user.getLogin());
+		
+		System.out.println("\n\n-------------------------------- Liste des utilisateurs ----------------------------------\n-");
+		for(int i = 0; i < users.liste.size(); i++){
+			System.out.println(users.liste.get(i) + "\n");
+		}
+		
 		System.out.println("\n\n------------------------------ FORMULAIRE - AJOUTER UN AMI  ------------------------------\n-");
 		System.out.println("Pour ajouter un utilisateur en tant qu'ami, merci de saisir son nom d'utilisateur.");
 		
