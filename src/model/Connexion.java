@@ -52,6 +52,6 @@ public class Connexion {
 	}
 	
 	public static void incrementLastId(){
-		last_id = last_id++;
+		last_id++;
 	}
 }
