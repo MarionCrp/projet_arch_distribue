@@ -36,14 +36,15 @@ import java.util.ArrayList;
 
 public class ClientWebService {
 	
-	private static WebResource tier2 = null;
+	//private static WebResource tier2 = null;
+	private static Tier2 tier2 = null;
 	private static User current_user = null;
 	
 	public static void main(String args[]) throws Exception 
 	{
 
 		//Connexion à Tier2 - service "controleur" de marion
-		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
+		tier2 = new Tier2(); //Client.create().resource("http://localhost:8080/Messagerie");
 
 		//Lancement de l'application
 		menu_1_SignUp_Or_SignIn();	
@@ -164,7 +165,7 @@ public class ClientWebService {
 		JAXBElement<User> root;       
 		Unmarshaller unmarshaller;
 
-		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
+		reponse = tier2.inscription(userLogin, userPassword); //tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class);
 		Tier2 tier2 = new Tier2();
 		if(Boolean.parseBoolean(reponse)){
 			System.out.println("Inscripton réussie avec succès ! ");
@@ -247,7 +248,8 @@ public class ClientWebService {
 			JAXBElement<User> root;       
 			Unmarshaller unmarshaller;
 			
-			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			reponse = tier2.connexion(userLogin, userPassword); //tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			System.out.println(reponse);
 			if(Boolean.parseBoolean(reponse)){
 				System.out.println("Connexion réussie");
 				current_user = new User(userLogin, userPassword);
@@ -338,7 +340,7 @@ public class ClientWebService {
 		ArrayList<String> friendsUserNames = new ArrayList<String>();
 		Users friends = new Users();
 		
-		String reponse;
+		Users reponse; //String reponse;
 		StringBuffer xmlStr;
 		JAXBContext context;       
 		JAXBElement<Users> root;       
@@ -353,14 +355,15 @@ public class ClientWebService {
 			context = JAXBContext.newInstance(Users.class);
 			unmarshaller = context.createUnmarshaller();
 			
-			reponse = tier2.path("friends_list/" + current_user.getLogin()).get(String.class);
+			reponse = tier2.friends_list(current_user.getLogin()); // tier2.path("friends_list/" + current_user.getLogin()).get(String.class);
 			/*
 			 ** Traitement de la reponse XML : transformation en une instance de la classe Villes
 			 */
-			xmlStr = new StringBuffer(reponse);
-			root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Users.class);
+			//xmlStr = new StringBuffer(reponse);
+			//root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Users.class);
 
-			friends = root.getValue();
+			//friends = root.getValue();
+			friends = reponse; // Version sans RMI / Serveur 
 			
 			int optionNumber=1;
 			int listKey=-1;

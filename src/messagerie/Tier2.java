@@ -37,8 +37,8 @@ public class Tier2 {
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
 			
-	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-
+	         Tier3 tier_3 = new Tier3Impl(); //(Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+	         
 	         User searched_user = tier_3.find_user(login);
 
 	         
@@ -73,8 +73,8 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-	        //Tier3 tier_3 = new Tier3Impl();
+	        //Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+	        Tier3 tier_3 = new Tier3Impl();
 			User searched_user = tier_3.find_user(login);
 	 		if(searched_user == null){
 	 			//return "Cet utilisateur n'existe pas";
