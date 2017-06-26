@@ -172,5 +172,17 @@ public class Tier2 {
 			return false;
 		}
 	}
+	
+	public Boolean sendMessage(String current_user_login, String friend_login, String content){
+		try {
+			Tier3 tier3 = new Tier3Impl();
+			boolean has_been_send = tier3.sendMessage(current_user_login, friend_login, content);
+			return has_been_send;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 }

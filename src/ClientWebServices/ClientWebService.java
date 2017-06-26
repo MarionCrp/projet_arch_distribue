@@ -519,7 +519,7 @@ public class ClientWebService {
 																	// +
 																	// current_user.getLogin()).get(String.class);
 			
-			if(friend_requests.liste.isEmpty()){
+			if(reponse.liste.isEmpty()){
 				System.out.println("PERSONNE NE VEUT ETRE TON AMI !");
 			}
 			/*
@@ -635,13 +635,20 @@ public class ClientWebService {
 		// Activation du thread
 		thread.start();
 
-		while (userMessage != "QUITTER") {
+		while (!userMessage.equals("QUITTER")){
 			// On vérifie que la taille du login est correcte
 			System.out.println("Votre message : ");
-			userMessage = scanner.next();
-		}
+			userMessage = scanner.nextLine();
 
-		if (userMessage == "QUITTER") {
+			Boolean reponse = tier2.sendMessage(userLogin, friendLogin, userMessage);
+			if(reponse){
+				System.out.println("Message envoyé");
+			} else {
+				System.out.println("Une erreur est survenue, le message n'a pas été enregistré");
+			}
+		}
+		
+		if (userMessage.equals("QUITTER")) {
 			thread.quitter();
 			menu_2_MenuPrincipal(userLogin);
 		}

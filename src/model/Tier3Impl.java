@@ -492,5 +492,131 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			return null;
 		}
 		
+		
+		// MESSAGES
+		
+		public boolean sendMessage(String user_login, String friend_login, String content) throws RemoteException {
+
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder;
+			try {
+				docBuilder = docFactory.newDocumentBuilder();
+				// Find or Create XML
+				StreamResult result;
+				File xml = new File("conversations.xml");
+				Document doc;
+				Element rootElement;
+				
+				int xml_last_id = 0;
+				
+				if(xml.exists()){
+					result = new StreamResult(xml);
+					doc = docBuilder.parse(xml);
+					rootElement = (Element) doc.getElementsByTagName("conversations").item(0);
+					NodeList id_nodes = doc.getElementsByTagName("id");
+					if(id_nodes.getLength() > 0){
+						xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
+						System.out.println(xml_last_id);
+					}
+				}
+				else {
+					doc = docBuilder.newDocument();
+					result = new StreamResult(new File("conversations.xml"));
+					// root elements
+					rootElement = doc.createElement("conversations");
+					doc.appendChild(rootElement);
+				}
+				
+				//On récupère tous les noeufs "user"
+				NodeList users_nodes = doc.getElementsByTagName("user");
+				Element conversation = null;
+				Element messages = null;
+				for(int i = 0; i < users_nodes.getLength(); i++){
+					Element parent = (Element) users_nodes.item(i).getParentNode();
+					
+					// On chèque si l'un des user est le current_user.
+					// Si oui, on verifie si le deuxième user est le destinataire du message.
+					// Si oui, on assigne la conversation, sinon on en créé une.
+					if (parent.getElementsByTagName("user").item(0).getTextContent().equals(user_login)){
+						if (parent.getElementsByTagName("user").item(1).getTextContent().equals(friend_login)){
+							conversation = (Element) parent.getParentNode();
+							messages = (Element) conversation.getElementsByTagName("messages").item(0);
+						}
+					} else if (parent.getElementsByTagName("user").item(1).getTextContent().equals(user_login)){
+						if (parent.getElementsByTagName("user").item(0).getTextContent().equals(friend_login)){
+							conversation = (Element) parent.getParentNode();
+							messages = (Element) conversation.getElementsByTagName("messages").item(0);
+
+						}
+					}
+				}
+				
+				// On créé la conversation si elle n'existe pas
+				if(conversation == null){
+					conversation = doc.createElement("conversation");
+					
+					Element conversation_id = doc.createElement("id");
+					conversation_id.setTextContent(String.valueOf(xml_last_id + 1));
+					
+					Element users = doc.createElement("users");
+					Element user_1 = doc.createElement("user");
+					user_1.setTextContent(user_login);
+					Element user_2 = doc.createElement("user");
+					user_2.setTextContent(friend_login);
+					
+					Element start_date = doc.createElement("start_date");
+					start_date.setTextContent((new Date()).toString());
+					
+					messages = doc.createElement("messages");
+					
+					rootElement.appendChild(conversation);
+					
+					users.appendChild(user_1);
+					users.appendChild(user_2);
+					
+					conversation.appendChild(conversation_id);
+					conversation.appendChild(start_date);
+					conversation.appendChild(users);
+					conversation.appendChild(messages);
+
+				}
+
+				Element message = doc.createElement("message");
+
+				Element message_content = doc.createElement("content");
+				message_content.setTextContent(content);
+				Element author = doc.createElement("author");
+				author.setTextContent(user_login);
+				Element created_at = doc.createElement("created_at");
+				created_at.setTextContent((new Date()).toString());
+				Element read = doc.createElement("read");
+				read.setTextContent("false");
+
+				
+				messages.appendChild(message);
+				
+				message.appendChild(created_at);
+				message.appendChild(author);
+				message.appendChild(message_content);
+				message.appendChild(read);
+				
+				// write the content into xml file
+				TransformerFactory transformerFactory = TransformerFactory.newInstance();
+				Transformer transformer = transformerFactory.newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+				DOMSource source = new DOMSource(doc);
+				
+				transformer.transform(source, result);
+
+				return true;
+				
+			} catch (Exception e){
+				System.out.println("Erreur Tier 3 : Impossible d'ajouter l'utilisateur");
+				e.printStackTrace();
+			}
+			return false;
+		}
+		
 	
 }
