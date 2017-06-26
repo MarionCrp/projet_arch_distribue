@@ -422,7 +422,7 @@ public class ClientWebService {
 
 	}
 
-	// formulaire d'ajout d'ami
+	// formulaire d'ajout d'ami : Affiche tous les utilisateurs qui ne sont pas relié à une connexion avec le current_user
 	public static void form_3_AddFriend(String userLogin) {
 		Scanner scanner = new Scanner(System.in);
 		String friendLogin = "";
@@ -446,10 +446,15 @@ public class ClientWebService {
 			while (!ok1) {
 				// On vérifie que la taille du login est correcte
 				System.out.println("Ajouter le nom d'utilisateur : ");
+				System.out.println("Ou '0' pour retour au menu ");
 				friendLogin = scanner.next();
+				if(friendLogin.equals("0")){
+					menu_2_MenuPrincipal(userLogin);
+					break;
+				}
 
 				// On vérifie que l'utilisateur fait bien parti de la liste
-				if (!users.liste.contains(friendLogin)) {
+				else if (!users.liste.contains(friendLogin)) {
 					System.out
 							.println("L'utilisateur n'est pas dans la liste !");
 				} else {
