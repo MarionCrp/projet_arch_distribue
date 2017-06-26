@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<connexions>
+<connexion>
+    <id>1</id>
+    <sender_login>marion</sender_login>
+    <recipient_login>elodie</recipient_login>
+    <date>Fri Jun 23 16:39:46 CEST 2017</date>
+  </connexion>
+<connexion>
+    <id>2</id>
+    <sender_login>marion</sender_login>
+    <recipient_login>milena</recipient_login>
+    <date>Fri Jun 23 16:40:00 CEST 2017</date>
+  </connexion>
+<connexion>
+    <id>1</id>
+    <sender_login>elodie</sender_login>
+    <recipient_login>david</recipient_login>
+    <date>Mon Jun 26 19:16:12 CEST 2017</date>
+  </connexion>
+<connexion>
+    <id>2</id>
+    <sender_login>elodie</sender_login>
+    <recipient_login>milena</recipient_login>
+    <date>Mon Jun 26 19:20:27 CEST 2017</date>
+  </connexion>
+<connexion>
+    <id>3</id>
+    <sender_login>elodie</sender_login>
+    <recipient_login>marion</recipient_login>
+    <date>Mon Jun 26 19:22:38 CEST 2017</date>
+  </connexion>
+<connexion>
+    <id>4</id>
+    <sender_login>elodie</sender_login>
+    <recipient_login>Elodie</recipient_login>
+    <date>Mon Jun 26 19:23:48 CEST 2017</date>
+  </connexion>
+</connexions>

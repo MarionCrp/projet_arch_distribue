@@ -2,7 +2,7 @@ package model;
 
 import java.util.Date;
 
-public class Connection {
+public class Connexion {
 
 	private int connexion_id;
 	private String sender_login;
@@ -10,7 +10,9 @@ public class Connection {
 	private Date creating_date;
 	private String state;
 	
-	public Connection(){
+	private static int last_id;
+	
+	public Connexion(){
 		
 	}
 	
@@ -43,5 +45,17 @@ public class Connection {
 	}
 	public void setState(String state) {
 		this.state = state;
+	}
+	
+	public static int getLastId(){
+		return last_id;
+	}
+	
+	public static void setLastId(int id) {
+		last_id = id;
+	}
+	
+	public static void incrementLastId(){
+		last_id++;
 	}
 }

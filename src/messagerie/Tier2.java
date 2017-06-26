@@ -1,6 +1,7 @@
 package messagerie;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
@@ -37,8 +38,8 @@ public class Tier2 {
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
 			
-	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-
+	         Tier3 tier_3 = new Tier3Impl(); //(Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+	         
 	         User searched_user = tier_3.find_user(login);
 
 	         
@@ -73,8 +74,8 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-	        //Tier3 tier_3 = new Tier3Impl();
+	        //Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+	        Tier3 tier_3 = new Tier3Impl();
 			User searched_user = tier_3.find_user(login);
 	 		if(searched_user == null){
 	 			//return "Cet utilisateur n'existe pas";
@@ -106,6 +107,37 @@ public class Tier2 {
 		friends.liste.add("toto2");
 		friends.liste.add("toto3");
 		return friends;
+	}
+	
+	@GET
+	@Path("users/{current_user_login}")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public Users users_list (@PathParam("current_user_login") String current_user_login) 
+	{
+		Tier3 tier3;
+		try {
+			tier3 = new Tier3Impl();
+			Users users = tier3.users_list(current_user_login);
+			System.out.println(users);
+			return users;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public String addFriend(String current_user_login, String friendLogin) {
+		try {
+			Tier3 tier3 = new Tier3Impl();
+			tier3.addFriend(current_user_login, friendLogin);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 }

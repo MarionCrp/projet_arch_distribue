@@ -222,7 +222,52 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	}
 	
 	@Override
-	public Users friends_list(String login) throws RemoteException {
+	public Users users_list(String current_user_login) throws RemoteException {
+		
+		Users listUsers = new Users();
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			
+			// Find or Create XML
+			StreamResult result;
+			File xml = new File("users.xml");
+			Document doc;
+			Element rootElement;
+			
+			if(xml.exists()){
+				result = new StreamResult(xml);
+				doc = docBuilder.parse(xml);
+				
+				NodeList logins = doc.getElementsByTagName("login");
+				for(int i = 0; i < logins.getLength(); i++){
+					if(!logins.item(i).getTextContent().equals(current_user_login)){						
+						listUsers.addUser(logins.item(i).getTextContent());
+					}
+				}
+				
+				// TODO : Enlever les utilisateurs qui sont déjà connecté à l'utilisateur.
+
+				return listUsers;
+			}
+		
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Users friends_list(String current_user_login) throws RemoteException {
 		
 		Users listUsers = new Users();
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -244,7 +289,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				NodeList connections_id = doc.getElementsByTagName("id");
 				for(int i = 0; i < connections_id.getLength(); i++){
 					Element parent = (Element) connections_id.item(i).getParentNode();
-					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(login)){
+					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
 						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
 							listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
 						}
@@ -253,21 +298,13 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				return listUsers;
 			}
 		
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e){
+			
 		}
-		
 		return null;
 	}
 	
-	public boolean addFriend(String user_login, String friend_login){
+	public boolean addFriend(String user_login, String friend_login) throws RemoteException {
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder;
@@ -275,38 +312,44 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			docBuilder = docFactory.newDocumentBuilder();
 			// Find or Create XML
 			StreamResult result;
-			File xml = new File("connections.xml");
+			File xml = new File("connexions.xml");
 			Document doc;
 			Element rootElement;
 			
 			if(xml.exists()){
 				result = new StreamResult(xml);
 				doc = docBuilder.parse(xml);
-				rootElement = (Element) doc.getElementsByTagName("connections").item(0);
+				rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
+				NodeList id_nodes = doc.getElementsByTagName("id");
+				int xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
+				Connexion.setLastId(xml_last_id);
 			}
 			else {
 				doc = docBuilder.newDocument();
-				result = new StreamResult(new File("connections.xml"));
+				result = new StreamResult(new File("connexions.xml"));
 				// root elements
-				rootElement = doc.createElement("connections");
+				rootElement = doc.createElement("connexions");
 				doc.appendChild(rootElement);
 			}
 			
-			Element connection = doc.createElement("connection");
-			Element connection_id = doc.createElement("id");
+			Element connexion = doc.createElement("connexion");
+			Element connexion_id = doc.createElement("id");
 			Element sender_login = doc.createElement("sender_login");
 			Element recipient_login = doc.createElement("recipient_login");
-			Element connection_date = doc.createElement("date");
+			Element connexion_date = doc.createElement("date");
 			
-			connection_id.setTextContent(connection_id.toString());
+			
+			int id = Connexion.getLastId() + 1;
+			
+			connexion_id.setTextContent(String.valueOf(id));
 			sender_login.setTextContent(user_login);
 			recipient_login.setTextContent(friend_login);
-			connection_date.setTextContent((new Date()).toString());
-			rootElement.appendChild(connection);
-			connection.appendChild(connection_id);
-			connection.appendChild(sender_login);
-			connection.appendChild(recipient_login);
-			connection.appendChild(connection_date);
+			connexion_date.setTextContent((new Date()).toString());
+			rootElement.appendChild(connexion);
+			connexion.appendChild(connexion_id);
+			connexion.appendChild(sender_login);
+			connexion.appendChild(recipient_login);
+			connexion.appendChild(connexion_date);
 			
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -316,10 +359,10 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			DOMSource source = new DOMSource(doc);
 			
 			transformer.transform(source, result);
+			
+			Connexion.incrementLastId();
 
 			System.out.println("File saved!");
-
-			c_id = new Integer(c_id +1);
 			
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
