@@ -243,14 +243,13 @@ public class ClientWebService {
 																// + userLogin +
 																// "/" +
 																// userPassword).get(String.class);
-			System.out.println(reponse);
 			if (Boolean.parseBoolean(reponse)) {
 				System.out.println("Connexion réussie");
 				current_user = new User(userLogin, userPassword);
 				menu_2_MenuPrincipal(userLogin);
 			} else {
 				System.out.println("La connexion a échoué");
-				form_2_SignIn(userLogin, userPassword);
+				menu_1_SignUp_Or_SignIn();
 			}
 
 		} catch (Exception e) {
