@@ -201,6 +201,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	}
 	
 	@Override
+	// Users List = All users - friend - denied connexion.
 	public Users users_list(String current_user_login) throws RemoteException {
 		
 		Users listUsers = new Users();
@@ -211,18 +212,28 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			
 			// Find or Create XML
 			StreamResult result;
-			File xml = new File("users.xml");
+			File user_xml = new File("users.xml");
 			Document doc;
 			Element rootElement;
 			
-			if(xml.exists()){
-				result = new StreamResult(xml);
-				doc = docBuilder.parse(xml);
+			// On récupère toutes les relations déjà créée (quelque soit l'état), pour ne pas faire de doublon.
+			Users already_connected_users = users_from_connexion(current_user_login);
+			
+			if(user_xml.exists()){
+				result = new StreamResult(user_xml);
+				doc = docBuilder.parse(user_xml);
 				
 				NodeList logins = doc.getElementsByTagName("login");
 				for(int i = 0; i < logins.getLength(); i++){
-					if(!logins.item(i).getTextContent().equals(current_user_login)){						
-						listUsers.addUser(logins.item(i).getTextContent());
+					String user_login = logins.item(i).getTextContent();
+					if(!user_login.equals(current_user_login)){
+						if(already_connected_users == null){
+							listUsers.addUser(logins.item(i).getTextContent());
+						} else {
+							if(!already_connected_users.liste.contains(user_login)){
+								listUsers.addUser(logins.item(i).getTextContent());
+							}
+						}
 					}
 				}
 				
@@ -249,14 +260,14 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			
 			// Find or Create XML
 			StreamResult result;
-			File xml = new File("connections.xml");
+			File xml = new File("connexions.xml");
 			Document doc;
 			Element rootElement;
 			
 			if(xml.exists()){
 				result = new StreamResult(xml);
 				doc = docBuilder.parse(xml);
-				rootElement = (Element) doc.getElementsByTagName("connections").item(0);
+				rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
 				
 				NodeList connections_id = doc.getElementsByTagName("id");
 				for(int i = 0; i < connections_id.getLength(); i++){
@@ -265,6 +276,45 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
 							listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
 						}
+					}
+				}
+				return listUsers;
+			}
+		
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	// Tous les utilisateurs connecté au current_user, quelque soit l'état de la connexion (accepted, denied, ou pending)
+	public Users users_from_connexion(String current_user_login) throws RemoteException {
+		Users listUsers = new Users();
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		
+		try {
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			
+			// Find or Create XML
+			StreamResult result;
+			File xml = new File("connexions.xml");
+			Document doc;
+			Element rootElement;
+			
+			if(xml.exists()){
+				result = new StreamResult(xml);
+				doc = docBuilder.parse(xml);
+				rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
+				
+				NodeList connections_id = doc.getElementsByTagName("id");
+				for(int i = 0; i < connections_id.getLength(); i++){
+					Element parent = (Element) connections_id.item(i).getParentNode();
+					
+					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
+						listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
+					}
+					if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
+						listUsers.addUser(parent.getElementsByTagName("sender_login").item(0).getTextContent());
 					}
 				}
 				return listUsers;
@@ -312,16 +362,21 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			Element connexion_id = doc.createElement("id");
 			Element sender_login = doc.createElement("sender_login");
 			Element recipient_login = doc.createElement("recipient_login");
+			Element state = doc.createElement("state");
 			Element connexion_date = doc.createElement("date");
 			
 			connexion_id.setTextContent(String.valueOf(xml_last_id + 1));
 			sender_login.setTextContent(user_login);
 			recipient_login.setTextContent(friend_login);
+			state.setTextContent("pending");
 			connexion_date.setTextContent((new Date()).toString());
 			rootElement.appendChild(connexion);
+			
 			connexion.appendChild(connexion_id);
 			connexion.appendChild(sender_login);
 			connexion.appendChild(recipient_login);
+			connexion.appendChild(recipient_login);
+			connexion.appendChild(state);
 			connexion.appendChild(connexion_date);
 			
 			// write the content into xml file
