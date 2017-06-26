@@ -139,5 +139,39 @@ public class Tier2 {
 		
 		return null;
 	}
+	
+	@GET
+	@Path("friend_requests_list/{current_user_login}")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public Users friend_requests_list (@PathParam("current_user_login") String current_user_login) 
+	{
+		Tier3 tier3;
+		try {
+			tier3 = new Tier3Impl();
+			//Users users = tier3.friend_requests_list(current_user_login);
+			Users users = new Users();
+			users.addUser("Toto1");
+			users.addUser("Toto2");
+			users.addUser("Toto3");
+			return users;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public Boolean acceptFriendRequest(String current_user_login, String friendLogin) {
+		try {
+			Tier3 tier3 = new Tier3Impl();
+			//tier3.accept_friend_request(current_user_login, friendLogin);
+			return true;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 }

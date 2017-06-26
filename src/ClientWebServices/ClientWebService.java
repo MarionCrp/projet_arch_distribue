@@ -473,6 +473,7 @@ public class ClientWebService {
 			} catch (Exception e) {
 				System.out
 						.println("Utilisateur inexistant, veuillez réssayer.\n-");
+				form_3_AddFriend(userLogin);
 			}
 		}
 	}
@@ -490,23 +491,47 @@ public class ClientWebService {
 		System.out.println("0 : Quitter l'application.");
 		System.out.println("1 : Revenir au menu principal.\n-");
 
-		Map<Integer, String> friendRequestList = new HashMap<Integer, String>();
-
-		ArrayList<String> friendsRequestUserNames = new ArrayList<String>();
-		// MARION - ON RECUPERE LES DEMANDES D'AMI ICI
-		// friendsRequests =
-
 		int optionNumber = 1;
 		int listKey = -1;
-		for (String friendRequestUserName : friendsRequestUserNames) {
-			optionNumber++;// pour l'affichage d'option
-			listKey++;// clé du tableau associatif
-			System.out.println(optionNumber + " : Accepter la demande de "
-					+ friendRequestUserName);
-			friendRequestList.put(listKey, friendRequestUserName);
+		Map<Integer, String> requestList = new HashMap<Integer, String>();
+		Users friend_requests = new Users();
 
-		}
+		Users reponse; // String reponse;
+		StringBuffer xmlStr;
+		JAXBContext context;
+		JAXBElement<Users> root;
+		Unmarshaller unmarshaller;
 
+		/*
+		 * * Instanciation du convertiseur XML => Objet Java
+		 */
+		try {
+
+			// On récupère les amis
+			context = JAXBContext.newInstance(Users.class);
+			unmarshaller = context.createUnmarshaller();
+
+			reponse = tier2.friend_requests_list(current_user.getLogin()); // tier2.path("friend_requests/"
+																	// +
+																	// current_user.getLogin()).get(String.class);
+			/*
+			 * * Traitement de la reponse XML : transformation en une instance
+			 * de la classe User
+			 */
+			// xmlStr = new StringBuffer(reponse);
+			// root = unmarshaller.unmarshal(new StreamSource(new
+			// StringReader(xmlStr.toString())), Users.class);
+
+			// friends = root.getValue();
+			friend_requests = reponse; // Version sans RMI / Serveur
+
+			for (int i = 0; i < friend_requests.liste.size(); i++) {
+				optionNumber++;// pour l'affichage d'option
+				listKey++;// clé du tableau associatif
+				System.out.println(optionNumber + " : Accepter la demande de --- "
+						+ friend_requests.liste.get(i));
+				requestList.put(optionNumber, friend_requests.liste.get(i));
+			}
 		// vérification de l'option
 		while (!ok) {
 			// On vérifie que l'utilisateur entre bien un integer
@@ -537,20 +562,31 @@ public class ClientWebService {
 		} else {
 			// on récupère le nom d'utilisateur dans le hasmap associatif
 			// (peut-être des conditions test à faire ici)
-			String friend = friendRequestList.get(listKey);
+			String friend = requestList.get(userResponse);
 
 			try {
-				// MARION - ACCEPTATON DEMANDE AMI ICI (avec friend = Login)
+				boolean is_accepted = tier2.acceptFriendRequest(current_user.getLogin(), friend);
+				if(is_accepted){
+					System.out.println("Utilisateur " + friend
+							+ " ajouté à votre liste d'amis.");
+					menu_2_MenuPrincipal(userLogin);
+				} else {
+					System.out.println("Une erreur est survenue lors de l'acceptation de la demande d'ami");
+					menu_4_AcceptFriendRequest(current_user.getLogin());
+				}
 
-				System.out.println("Utilisateur " + friend
-						+ " ajouté à votre liste d'amis.");
-				menu_2_MenuPrincipal(userLogin);
 			} catch (Exception e) {
 				System.out
 						.println("Erreur - Demande d'ami - CODE 777. Application arrêtée.");
 				System.exit(0);
 			}
 		}
+		} catch(Exception e){
+			System.out
+			.println("Erreur - Demande d'ami formulaire - CODE 777. Application arrêtée.");
+			System.exit(0);
+		}
+		
 
 	}
 
