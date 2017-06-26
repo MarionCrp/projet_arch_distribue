@@ -277,6 +277,11 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 							listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
 						}
 					}
+					if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
+						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
+							listUsers.addUser(parent.getElementsByTagName("sender_login").item(0).getTextContent());
+						}
+					}
 				}
 				return listUsers;
 			}

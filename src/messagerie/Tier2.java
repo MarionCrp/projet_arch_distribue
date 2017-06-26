@@ -102,11 +102,16 @@ public class Tier2 {
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	public Users friends_list (@PathParam("current_user_login") String current_user_login) 
 	{
-		Users friends = new Users();
-		friends.liste.add("toto1");
-		friends.liste.add("toto2");
-		friends.liste.add("toto3");
-		return friends;
+		Tier3 tier3;
+		try {
+			tier3 = new Tier3Impl();
+			Users users = tier3.friends_list(current_user_login);
+			return users;
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@GET
@@ -118,13 +123,12 @@ public class Tier2 {
 		try {
 			tier3 = new Tier3Impl();
 			Users users = tier3.users_list(current_user_login);
-			System.out.println(users);
 			return users;
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 
 	}
 
