@@ -21,4 +21,8 @@
     <login>david</login>
     <password>password</password>
   </user>
+<user>
+    <login>theo</login>
+    <password>klkgluce</password>
+  </user>
 </users>
