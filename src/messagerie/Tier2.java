@@ -147,11 +147,7 @@ public class Tier2 {
 		Tier3 tier3;
 		try {
 			tier3 = new Tier3Impl();
-			//Users users = tier3.friend_requests_list(current_user_login);
-			Users users = new Users();
-			users.addUser("Toto1");
-			users.addUser("Toto2");
-			users.addUser("Toto3");
+			Users users = tier3.friend_requests_list(current_user_login);
 			return users;
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -164,8 +160,8 @@ public class Tier2 {
 	public Boolean acceptFriendRequest(String current_user_login, String friendLogin) {
 		try {
 			Tier3 tier3 = new Tier3Impl();
-			//tier3.accept_friend_request(current_user_login, friendLogin);
-			return true;
+			boolean has_been_accepted = tier3.acceptFriend(current_user_login, friendLogin);
+			return has_been_accepted;
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

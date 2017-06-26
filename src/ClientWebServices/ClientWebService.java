@@ -519,6 +519,10 @@ public class ClientWebService {
 			reponse = tier2.friend_requests_list(current_user.getLogin()); // tier2.path("friend_requests/"
 																	// +
 																	// current_user.getLogin()).get(String.class);
+			
+			if(friend_requests.liste.isEmpty()){
+				System.out.println("PERSONNE NE VEUT ETRE TON AMI !");
+			}
 			/*
 			 * * Traitement de la reponse XML : transformation en une instance
 			 * de la classe User
@@ -572,8 +576,8 @@ public class ClientWebService {
 			try {
 				boolean is_accepted = tier2.acceptFriendRequest(current_user.getLogin(), friend);
 				if(is_accepted){
-					System.out.println("Utilisateur " + friend
-							+ " ajouté à votre liste d'amis.");
+					System.out.println(friend
+							+ " a été ajouté(e) à votre liste d'amis.");
 					menu_2_MenuPrincipal(userLogin);
 				} else {
 					System.out.println("Une erreur est survenue lors de l'acceptation de la demande d'ami");

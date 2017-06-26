@@ -17,8 +17,14 @@ public interface Tier3 extends Remote{
 	
 	public Users friends_list(String current_user_login) throws RemoteException;
 
-	Users users_list(String current_user_login) throws RemoteException;
-
 	public boolean addFriend(String current_user_login, String friend_login) throws RemoteException;
+	
+	public boolean acceptFriend(String current_user_login, String friend_login) throws RemoteException;
+	
+	public Users users_list(String current_user_login) throws RemoteException;
+
+	public Users users_from_connexion(String current_user_login) throws RemoteException;
+
+	public Users friend_requests_list(String current_user_login) throws RemoteException;
 
 }

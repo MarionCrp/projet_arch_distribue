@@ -287,8 +287,9 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		return null;
 	}
 	
-	// Tous les utilisateurs connecté au current_user, quelque soit l'état de la connexion (accepted, denied, ou pending)
-	public Users users_from_connexion(String current_user_login) throws RemoteException {
+	@Override
+	public Users friend_requests_list(String current_user_login) throws RemoteException {
+		
 		Users listUsers = new Users();
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		
@@ -309,12 +310,10 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				NodeList connections_id = doc.getElementsByTagName("id");
 				for(int i = 0; i < connections_id.getLength(); i++){
 					Element parent = (Element) connections_id.item(i).getParentNode();
-					
-					if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
-						listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
-					}
 					if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
-						listUsers.addUser(parent.getElementsByTagName("sender_login").item(0).getTextContent());
+						if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("pending")){
+							listUsers.addUser(parent.getElementsByTagName("sender_login").item(0).getTextContent());
+						}
 					}
 				}
 				return listUsers;
@@ -397,5 +396,96 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 		return false;
 	}
+	
+	
+	// Lorsqu'on accepte une demande de connexion
+	public boolean acceptFriend(String current_user_login, String friend_login) throws RemoteException {
+
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder;
+		try {
+			docBuilder = docFactory.newDocumentBuilder();
+			// Find or Create XML
+			StreamResult result;
+			File xml = new File("connexions.xml");
+			Document doc;
+			Element rootElement;
+			
+			if(xml.exists()){
+				result = new StreamResult(xml);
+				doc = docBuilder.parse(xml);
+				rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
+				NodeList current_user_requests = doc.getElementsByTagName("recipient_login");
+				for(int i = 0; i < current_user_requests.getLength(); i++){
+					Element parent = (Element) current_user_requests.item(i).getParentNode();
+					if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
+						if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(friend_login)){
+							parent.getElementsByTagName("state").item(0).setTextContent("accepted");
+						}
+					}
+				}
+			} else {
+				System.out.println("Une erreur est survenue, aucune connexion enregistrée en base");
+				return false;
+			}
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			DOMSource source = new DOMSource(doc);
+			
+			transformer.transform(source, result);
+
+			System.out.println("File saved!");
+			return true;
+			
+		} catch (Exception e){
+			System.out.println("Erreur Tier 3 : Impossible d'ajouter l'utilisateur");
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	// Tous les utilisateurs connecté au current_user, quelque soit l'état de la connexion (accepted, denied, ou pending)
+		public Users users_from_connexion(String current_user_login) throws RemoteException {
+			Users listUsers = new Users();
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			
+			try {
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				
+				// Find or Create XML
+				StreamResult result;
+				File xml = new File("connexions.xml");
+				Document doc;
+				Element rootElement;
+				
+				if(xml.exists()){
+					result = new StreamResult(xml);
+					doc = docBuilder.parse(xml);
+					rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
+					
+					NodeList connections_id = doc.getElementsByTagName("id");
+					for(int i = 0; i < connections_id.getLength(); i++){
+						Element parent = (Element) connections_id.item(i).getParentNode();
+						
+						if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
+							listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
+						}
+						if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
+							listUsers.addUser(parent.getElementsByTagName("sender_login").item(0).getTextContent());
+						}
+					}
+					return listUsers;
+				}
+			
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
 	
 }
