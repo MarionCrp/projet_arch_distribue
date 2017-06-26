@@ -59,14 +59,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			Tier3Impl tier3 = new Tier3Impl();
 			registry.bind("Tier3", tier3);
 			Thread.sleep(99999);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (AlreadyBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e){
 			e.printStackTrace();
 		}
 		
@@ -161,17 +154,9 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 
 				System.out.println("File saved!");
 
-			  } catch (ParserConfigurationException pce) {
-				pce.printStackTrace();
-			  } catch (TransformerException tfe) {
-				tfe.printStackTrace();
-			  } catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			  } catch (Exception e){
+					e.printStackTrace();
+				}
 			
 			return true;
 		} else {
@@ -209,15 +194,9 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				}
 				return null;
 			}
-		  } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		  } catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		  } catch (Exception e){
+				e.printStackTrace();
+			}
 		return null;
 	}
 	
@@ -252,14 +231,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				return listUsers;
 			}
 		
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}catch (Exception e){
 			e.printStackTrace();
 		}
 		
@@ -299,7 +271,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			}
 		
 		} catch (Exception e){
-			
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -316,13 +288,17 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			Document doc;
 			Element rootElement;
 			
+			int xml_last_id = 0;
+			
 			if(xml.exists()){
 				result = new StreamResult(xml);
 				doc = docBuilder.parse(xml);
 				rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
 				NodeList id_nodes = doc.getElementsByTagName("id");
-				int xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
-				Connexion.setLastId(xml_last_id);
+				if(id_nodes.getLength() > 0){
+					xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
+					System.out.println(xml_last_id);
+				}
 			}
 			else {
 				doc = docBuilder.newDocument();
@@ -338,10 +314,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			Element recipient_login = doc.createElement("recipient_login");
 			Element connexion_date = doc.createElement("date");
 			
-			
-			int id = Connexion.getLastId() + 1;
-			
-			connexion_id.setTextContent(String.valueOf(id));
+			connexion_id.setTextContent(String.valueOf(xml_last_id + 1));
 			sender_login.setTextContent(user_login);
 			recipient_login.setTextContent(friend_login);
 			connexion_date.setTextContent((new Date()).toString());
@@ -359,29 +332,15 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			DOMSource source = new DOMSource(doc);
 			
 			transformer.transform(source, result);
-			
-			Connexion.incrementLastId();
 
 			System.out.println("File saved!");
+			return true;
 			
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e){
+			System.out.println("Erreur Tier 3 : Impossible d'ajouter l'utilisateur");
 			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		
-		return true;
+		}
+		return false;
 	}
 	
 }

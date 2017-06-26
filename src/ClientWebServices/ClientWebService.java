@@ -459,8 +459,8 @@ public class ClientWebService {
 
 			try {
 
-				if (Boolean.parseBoolean(tier2.addFriend(
-						current_user.getLogin(), friendLogin))) {
+				if (tier2.addFriend(
+						current_user.getLogin(), friendLogin)) {
 					System.out.println("Demande d'ami envoyé à " + friendLogin);
 				} else {
 					System.out
