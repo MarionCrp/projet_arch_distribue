@@ -464,7 +464,7 @@ public class ClientWebService {
 					System.out.println("Demande d'ami envoyé à " + friendLogin);
 				} else {
 					System.out
-							.println("Erreur lors de l'envoie de demande de connexion");
+							.println("Erreur lors de l'envoi de demande de connexion");
 				}
 
 				// si connexion réussie, go menu 2

@@ -320,6 +320,9 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				result = new StreamResult(xml);
 				doc = docBuilder.parse(xml);
 				rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
+				NodeList id_nodes = doc.getElementsByTagName("id");
+				int xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
+				Connexion.setLastId(xml_last_id);
 			}
 			else {
 				doc = docBuilder.newDocument();
@@ -360,8 +363,6 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			Connexion.incrementLastId();
 
 			System.out.println("File saved!");
-
-			c_id = new Integer(c_id +1);
 			
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
