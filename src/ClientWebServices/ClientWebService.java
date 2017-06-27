@@ -14,10 +14,14 @@ import com.sun.jersey.api.client.WebResource;
 import java.io.StringReader;
 
 import messagerie.Tier2;
+import model.Conversation;
+import model.Message;
 //import model.Message;
 import model.User;
 import model.Users;
 import ClientWebServices.messageListener;
+
+
 
 //import model.Users;
 import java.util.Scanner;
@@ -610,10 +614,12 @@ public class ClientWebService {
 		String lastMessage = "";
 		// MARION METTRE LA FONCTION, il faut qu'elle affiche les 10 derniers
 		// message et qu'elle retourne le dernier message en string
-		// lastMessage = tafonction();
 		// résultat du type
 		// System.out.println(messageTime+" - "+authorUserName+" : "+lastMessageInBase);
-		lastMessage = tier2.lastMessages(userLogin, friendUserName);
+		Conversation last_messages = tier2.lastTenMessages(userLogin, friendUserName);
+		for(Message message : last_messages.getMessages()){
+			System.out.println(message.getDatetime() + " - " + message.getSender().getLogin() + " : " + message.getContent());
+		}
 
 		form_4_SendMessage(userLogin, friendUserName, lastMessage);
 	}

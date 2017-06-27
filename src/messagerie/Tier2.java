@@ -16,6 +16,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 
+import model.Conversation;
+import model.Message;
 import model.Tier3Impl;
 import model.User;
 import model.Users;
@@ -194,23 +196,24 @@ public class Tier2 {
 		return null;
 	}
 	
-	public String lastMessages(String userLogin, String friendLogin){
-		String lastMessage ="";
+	public Conversation lastTenMessages(String userLogin, String friendLogin){
+		Conversation last_ten_messages = new Conversation();
 				
 		try {
 			Tier3 tier3 = new Tier3Impl();
-			TreeMap<Date, String> last_ten_messages = new TreeMap<Date, String>();
 			last_ten_messages = tier3.getLastTenMessages(userLogin, friendLogin);
-			
-			for (Date datetime : last_ten_messages.keySet()){
-				System.out.println(datetime + " - " + last_ten_messages.get(datetime));
-				lastMessage = last_ten_messages.get(datetime);
-			}
+
 		} catch (RemoteException e) {
 			System.out.println("pb dans la fonction lastMessage du Tier2");
 			e.printStackTrace();
 		}		
-		return lastMessage;
+		return last_ten_messages;
+	}
+	
+	public Message lastMessage(String current_user_login, String friend_user_login){
+		Conversation conv = lastTenMessages(current_user_login, friend_user_login);
+		
+		return conv.getLastMessage();
 	}
 
 }

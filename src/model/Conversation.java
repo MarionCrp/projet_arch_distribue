@@ -43,5 +43,13 @@ public class Conversation {
 	public void addMessage(Message message){
 		this.messages.add(message);
 	}
+	
+	public ArrayList<Message> getMessages(){
+		return this.messages;
+	}
+	
+	public Message getLastMessage(){
+		return this.messages.get(this.messages.size() - 1);
+	}
 
 }

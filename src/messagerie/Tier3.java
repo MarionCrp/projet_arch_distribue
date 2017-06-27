@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import model.Conversation;
+import model.Message;
 import model.User;
 import model.Users;
 
@@ -35,5 +37,5 @@ public interface Tier3 extends Remote{
 	// MESSAGES
 	public boolean sendMessage(String current_user_login, String friend_login, String content) throws RemoteException;
 
-	public TreeMap<Date, String> getLastTenMessages(String userLogin, String friendLogin)throws RemoteException;
+	public Conversation getLastTenMessages(String userLogin, String friendLogin)throws RemoteException;
 }

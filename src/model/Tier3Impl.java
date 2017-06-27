@@ -625,8 +625,10 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			return false;
 		}
 		
-		public TreeMap<Date, String> getLastTenMessages(String userLogin, String friendLogin) throws RemoteException {
-			TreeMap<Date,String> last_ten_messages = new TreeMap<Date, String>();
+		public Conversation getLastTenMessages(String userLogin, String friendLogin) throws RemoteException {
+			Conversation last_ten_messages = new Conversation();
+			last_ten_messages.setUser1(new User(userLogin, ""));
+			last_ten_messages.setUser1(new User(friendLogin, ""));
 			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder;
@@ -677,36 +679,20 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 						loop_origin = message_nodes.getLength()-10;
 					}
 					for (int j = loop_origin ; j < message_nodes.getLength(); j++){
-						Element message = (Element) message_nodes.item(j);
+						Element message_elt = (Element) message_nodes.item(j);
 						DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
-						Date datetime = df.parse(message.getElementsByTagName("created_at").item(0).getTextContent());
-						String content = message.getElementsByTagName("content").item(0).getTextContent();
-						String author = message.getElementsByTagName("author").item(0).getTextContent();
-						last_ten_messages.put(datetime, author.toUpperCase() + " : " + content);
+						Date datetime = df.parse(message_elt.getElementsByTagName("created_at").item(0).getTextContent());
+						String content = message_elt.getElementsByTagName("content").item(0).getTextContent();
+						User author = new User(message_elt.getElementsByTagName("author").item(0).getTextContent(), "");
+						Message message = new Message(null, author, content, datetime);
+						last_ten_messages.addMessage(message);
 					}
-					
 				}
 				
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (DOMException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e){
+				System.out.println("Erreur Tier 3 : Impossible de récupérer la conversation");
 				e.printStackTrace();
 			}
-			
-			
 			return last_ten_messages;
 		}
-		
-	
 }
