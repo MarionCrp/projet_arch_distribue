@@ -82,21 +82,21 @@ public class Tier2 {
 	        Tier3 tier_3 = new Tier3Impl();
 			User searched_user = tier_3.find_user(login);
 	 		if(searched_user == null){
-	 			//return "Cet utilisateur n'existe pas";
-	 			return "false";
+	 			return "Cet utilisateur n'existe pas";
+	 			//return "false";
 	 		} else {
 	 	        if(searched_user.getPassword().equals(password)){
-	 	        	//return "Connecté avec succès";
-	 	        	return "true";
+	 	        	return "Connecté avec succès";
+	 	        	//return "true";
 	 	        } else {
 	 	        	// TODO Envoyer message : "Connexion impossible";
-	 	        	//return "Le mot de passe est incorrect";
-	 	        	return "false";
+	 	        	return "Le mot de passe est incorrect";
+	 	        	//return "false";
 	 		    }
 	 		}
 		} catch (Exception e){
-			//return "Une erreur est survenue";
-			return "false";
+			return "Une erreur est survenue";
+			//return "false";
 		}
 		
 	}
@@ -136,7 +136,11 @@ public class Tier2 {
 
 	}
 
-	public boolean addFriend(String current_user_login, String friendLogin) {
+	
+	@GET
+	@Path("addFriend/{current_user_login}/{friendLogin}")
+	@Produces("text/plain")
+	public boolean addFriend(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin) {
 		try {
 			Tier3 tier3 = new Tier3Impl();
 			return tier3.addFriend(current_user_login, friendLogin);
@@ -165,7 +169,10 @@ public class Tier2 {
 
 	}
 
-	public Boolean acceptFriendRequest(String current_user_login, String friendLogin) {
+	@GET
+	@Path("acceptFriendRequest/{current_user_login}/{friendLogin}")
+	@Produces("text/plain")
+	public Boolean acceptFriendRequest(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin) {
 		try {
 			Tier3 tier3 = new Tier3Impl();
 			boolean has_been_accepted = tier3.acceptFriend(current_user_login, friendLogin);
@@ -177,7 +184,10 @@ public class Tier2 {
 		}
 	}
 	
-	public String sendMessage(String current_user_login, String friend_login, String content){
+	@GET
+	@Path("sendMessage/{current_user_login}/{friendLogin}/{content}")
+	@Produces("text/plain")
+	public String sendMessage(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friend_login, @PathParam("content") String content){
 		try {
 			Tier3 tier3 = new Tier3Impl();
 			if (! content.equals("QUITTER")){
@@ -196,7 +206,10 @@ public class Tier2 {
 		return null;
 	}
 	
-	public Conversation lastTenMessages(String userLogin, String friendLogin){
+	@GET
+	@Path("friend_requests_list/{current_user_login}/{friendLogin}")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public Conversation lastTenMessages(@PathParam("current_user_login") String userLogin, @PathParam("friendLogin") String friendLogin){
 		Conversation last_ten_messages = new Conversation();
 				
 		try {
@@ -210,8 +223,11 @@ public class Tier2 {
 		return last_ten_messages;
 	}
 	
-	public Message lastMessage(String current_user_login, String friend_user_login){
-		Conversation conv = lastTenMessages(current_user_login, friend_user_login);
+	@GET
+	@Path("lastMessage/{current_user_login}/{friendLogin}")
+	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
+	public Message lastMessage(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin){
+		Conversation conv = lastTenMessages(current_user_login, friendLogin);
 		
 		return conv.getLastMessage();
 	}

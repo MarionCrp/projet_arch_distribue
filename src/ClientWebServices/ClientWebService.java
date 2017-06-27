@@ -33,13 +33,13 @@ import java.util.ArrayList;
 public class ClientWebService {
 
 	// private static WebResource tier2 = null;
-	private static Tier2 tier2 = null;
+	private static WebResource tier2 = null;
 	private static User current_user = null;
 
 	public static void main(String args[]) throws Exception {
 
 		// Connexion à Tier2 - service "controleur" de marion
-		tier2 = new Tier2(); // Client.create().resource("http://localhost:8080/Messagerie");
+		tier2 = Client.create().resource("http://localhost:8080/Messagerie"); // new Tier2(); // 
 
 		// Lancement de l'application
 		menu_1_SignUp_Or_SignIn();
@@ -155,10 +155,7 @@ public class ClientWebService {
 		JAXBElement<User> root;
 		Unmarshaller unmarshaller;
 
-		reponse = tier2.inscription(userLogin, userPassword); // tier2.path("inscription/"
-																// + userLogin +
-																// "/" +
-																// userPassword).get(String.class);
+		reponse = tier2.path("inscription/" + userLogin + "/" + userPassword).get(String.class); //tier2.inscription(userLogin, userPassword); 
 		Tier2 tier2 = new Tier2();
 		if (Boolean.parseBoolean(reponse)) {
 			System.out.println("Inscripton réussie avec succès ! ");
@@ -243,10 +240,12 @@ public class ClientWebService {
 			JAXBElement<User> root;
 			Unmarshaller unmarshaller;
 
-			reponse = tier2.connexion(userLogin, userPassword); // tier2.path("connexion/"
-																// + userLogin +
-																// "/" +
-																// userPassword).get(String.class);
+			System.out.println("Toto sign in");
+			
+			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			//Tier2 tier2bis = new Tier2();
+			//reponse = tier2bis.connexion(userLogin, userPassword);
+			System.out.println(tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class));
 			if (Boolean.parseBoolean(reponse)) {
 				System.out.println("Connexion réussie");
 				current_user = new User(userLogin, userPassword);
@@ -346,7 +345,7 @@ public class ClientWebService {
 		ArrayList<String> friendsUserNames = new ArrayList<String>();
 		Users friends = new Users();
 
-		Users reponse; // String reponse;
+		String reponse;
 		StringBuffer xmlStr;
 		JAXBContext context;
 		JAXBElement<Users> root;
@@ -361,19 +360,18 @@ public class ClientWebService {
 			context = JAXBContext.newInstance(Users.class);
 			unmarshaller = context.createUnmarshaller();
 
-			reponse = tier2.friends_list(current_user.getLogin()); // tier2.path("friends_list/"
-																	// +
-																	// current_user.getLogin()).get(String.class);
+			reponse = tier2.path("friends_list/" + current_user.getLogin()).get(String.class);
+
 			/*
 			 * * Traitement de la reponse XML : transformation en une instance
 			 * de la classe Villes
 			 */
-			// xmlStr = new StringBuffer(reponse);
-			// root = unmarshaller.unmarshal(new StreamSource(new
-			// StringReader(xmlStr.toString())), Users.class);
+			 xmlStr = new StringBuffer(reponse);
+			 root = unmarshaller.unmarshal(new StreamSource(new
+			 StringReader(xmlStr.toString())), Users.class);
 
-			// friends = root.getValue();
-			friends = reponse; // Version sans RMI / Serveur
+			friends = root.getValue();
+			//friends = reponse; // Version sans RMI / Serveur
 
 			int optionNumber = 1;
 			int listKey = -1;
@@ -429,60 +427,81 @@ public class ClientWebService {
 	public static void form_3_AddFriend(String userLogin) {
 		Scanner scanner = new Scanner(System.in);
 		String friendLogin = "";
+		Users users;
 		boolean ok1 = false;
 		boolean ok2 = false;
+		
+		String reponse;
+		StringBuffer xmlStr;
+		JAXBContext context;
+		JAXBElement<Users> root;
+		Unmarshaller unmarshaller;
 
-		Users users = tier2.users_list(current_user.getLogin());
+		//Users users = tier2.users_list(current_user.getLogin());
+		reponse = tier2.path("users_list/" + current_user.getLogin()).get(String.class);
+		
+		 xmlStr = new StringBuffer(reponse);
 
-		System.out
-				.println("\n\n-------------------------------- Liste des utilisateurs ----------------------------------\n-");
-		for (int i = 0; i < users.liste.size(); i++) {
-			System.out.println(users.liste.get(i) + "\n");
-		}
+		 try {
+			context = JAXBContext.newInstance(Users.class);
+			unmarshaller = context.createUnmarshaller();
+			root = unmarshaller.unmarshal(new StreamSource(new
+			StringReader(xmlStr.toString())), Users.class);
+		
+			 
+			users = root.getValue();
 
-		System.out
-				.println("\n\n------------------------------ FORMULAIRE - AJOUTER UN AMI  ------------------------------\n-");
-		System.out
-				.println("Pour ajouter un utilisateur en tant qu'ami, merci de saisir son nom d'utilisateur.");
+			System.out
+					.println("\n\n-------------------------------- Liste des utilisateurs ----------------------------------\n-");
+			for (int i = 0; i < users.liste.size(); i++) {
+				System.out.println(users.liste.get(i) + "\n");
+			}
 
-		while (!ok2) {
-			while (!ok1) {
-				// On vérifie que la taille du login est correcte
-				System.out.println("Ajouter le nom d'utilisateur : ");
-				System.out.println("Ou '0' pour retour au menu ");
-				friendLogin = scanner.next();
-				if(friendLogin.equals("0")){
+			System.out
+					.println("\n\n------------------------------ FORMULAIRE - AJOUTER UN AMI  ------------------------------\n-");
+			System.out
+					.println("Pour ajouter un utilisateur en tant qu'ami, merci de saisir son nom d'utilisateur.");
+
+			while (!ok2) {
+				while (!ok1) {
+					// On vérifie que la taille du login est correcte
+					System.out.println("Ajouter le nom d'utilisateur : ");
+					System.out.println("Ou '0' pour retour au menu ");
+					friendLogin = scanner.next();
+					if(friendLogin.equals("0")){
+						menu_2_MenuPrincipal(userLogin);
+						break;
+					}
+
+					// On vérifie que l'utilisateur fait bien parti de la liste
+					else if (!users.liste.contains(friendLogin)) {
+						System.out
+								.println("L'utilisateur n'est pas dans la liste !");
+					} else {
+						ok1 = true;
+					}
+				}
+
+				try {
+					reponse = tier2.path("addFriend/" + current_user.getLogin() + "/" + friendLogin).get(String.class);
+					if (Boolean.parseBoolean(reponse)) {
+						System.out.println("Demande d'ami envoyé à " + friendLogin);
+					} else {
+						System.out
+								.println("Erreur lors de l'envoi de demande de connexion");
+					}
+
+					// si connexion réussie, go menu 2
 					menu_2_MenuPrincipal(userLogin);
-					break;
-				}
-
-				// On vérifie que l'utilisateur fait bien parti de la liste
-				else if (!users.liste.contains(friendLogin)) {
+					ok2 = true;
+				} catch (Exception e) {
 					System.out
-							.println("L'utilisateur n'est pas dans la liste !");
-				} else {
-					ok1 = true;
+							.println("Utilisateur inexistant, veuillez réssayer.\n-");
+					form_3_AddFriend(userLogin);
 				}
 			}
-
-			try {
-
-				if (tier2.addFriend(
-						current_user.getLogin(), friendLogin)) {
-					System.out.println("Demande d'ami envoyé à " + friendLogin);
-				} else {
-					System.out
-							.println("Erreur lors de l'envoi de demande de connexion");
-				}
-
-				// si connexion réussie, go menu 2
-				menu_2_MenuPrincipal(userLogin);
-				ok2 = true;
-			} catch (Exception e) {
-				System.out
-						.println("Utilisateur inexistant, veuillez réssayer.\n-");
-				form_3_AddFriend(userLogin);
-			}
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 
@@ -504,7 +523,7 @@ public class ClientWebService {
 		Map<Integer, String> requestList = new HashMap<Integer, String>();
 		Users friend_requests = new Users();
 
-		Users reponse; // String reponse;
+		String reponse; // String reponse;
 		StringBuffer xmlStr;
 		JAXBContext context;
 		JAXBElement<Users> root;
@@ -519,23 +538,22 @@ public class ClientWebService {
 			context = JAXBContext.newInstance(Users.class);
 			unmarshaller = context.createUnmarshaller();
 
-			reponse = tier2.friend_requests_list(current_user.getLogin()); // tier2.path("friend_requests/"
-																	// +
-																	// current_user.getLogin()).get(String.class);
-			
-			if(reponse.liste.isEmpty()){
-				System.out.println("PERSONNE NE VEUT ETRE TON AMI !");
-			}
+			reponse = tier2.path("friend_requests/" + current_user.getLogin()).get(String.class);
+
 			/*
 			 * * Traitement de la reponse XML : transformation en une instance
 			 * de la classe User
 			 */
-			// xmlStr = new StringBuffer(reponse);
-			// root = unmarshaller.unmarshal(new StreamSource(new
-			// StringReader(xmlStr.toString())), Users.class);
+			 xmlStr = new StringBuffer(reponse);
+			 root = unmarshaller.unmarshal(new StreamSource(new
+			 StringReader(xmlStr.toString())), Users.class);
 
-			// friends = root.getValue();
-			friend_requests = reponse; // Version sans RMI / Serveur
+			 friend_requests = root.getValue();
+			 
+				if(friend_requests.liste.isEmpty()){
+					System.out.println("PERSONNE NE VEUT ETRE TON AMI !");
+				}
+			//friend_requests = reponse; // Version sans RMI / Serveur
 
 			for (int i = 0; i < friend_requests.liste.size(); i++) {
 				optionNumber++;// pour l'affichage d'option
@@ -575,10 +593,12 @@ public class ClientWebService {
 			// on récupère le nom d'utilisateur dans le hasmap associatif
 			// (peut-être des conditions test à faire ici)
 			String friend = requestList.get(userResponse);
+			
 
 			try {
-				boolean is_accepted = tier2.acceptFriendRequest(current_user.getLogin(), friend);
-				if(is_accepted){
+				reponse = tier2.path("acceptFriendRequest/" + current_user.getLogin() + "/" + friend).get(String.class);
+				//boolean is_accepted = tier2.acceptFriendRequest(current_user.getLogin(), friend);
+				if(Boolean.parseBoolean(reponse)){
 					System.out.println(friend
 							+ " a été ajouté(e) à votre liste d'amis.");
 					menu_2_MenuPrincipal(userLogin);
@@ -612,16 +632,41 @@ public class ClientWebService {
 				.println("\n-----\n(Pour revenir au menu principal, entrez ''QUITTER'')");
 
 		String lastMessage = "";
+		Conversation last_messages;
+		String reponse; // String reponse;
+		StringBuffer xmlStr;
+		JAXBContext context;
+		JAXBElement<Conversation> root;
+		Unmarshaller unmarshaller;
+
 		// MARION METTRE LA FONCTION, il faut qu'elle affiche les 10 derniers
 		// message et qu'elle retourne le dernier message en string
 		// résultat du type
 		// System.out.println(messageTime+" - "+authorUserName+" : "+lastMessageInBase);
-		Conversation last_messages = tier2.lastTenMessages(userLogin, friendUserName);
-		for(Message message : last_messages.getMessages()){
-			System.out.println(message.getDatetime() + " - " + message.getSender().getLogin() + " : " + message.getContent());
+
+		reponse = tier2.path("lastTenMessages/" + current_user.getLogin() + "/" + friendUserName).get(String.class);
+		
+		xmlStr = new StringBuffer(reponse);
+	    try {
+			
+			context = JAXBContext.newInstance(Users.class);
+			unmarshaller = context.createUnmarshaller();
+
+			root = unmarshaller.unmarshal(new StreamSource(new
+			StringReader(xmlStr.toString())), Conversation.class);
+			
+			last_messages = root.getValue();
+			for(Message message : last_messages.getMessages()){
+				System.out.println(message.getDatetime() + " - " + message.getSender().getLogin() + " : " + message.getContent());
+			}
+
+			form_4_SendMessage(userLogin, friendUserName, lastMessage);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		form_4_SendMessage(userLogin, friendUserName, lastMessage);
+	    
 	}
 
 	public static void form_4_SendMessage(String userLogin, String friendLogin,
@@ -646,8 +691,15 @@ public class ClientWebService {
 			// On vérifie que la taille du login est correcte
 			System.out.println("Votre message : ");
 			userMessage = scanner.nextLine();
+			
+			String reponse; // String reponse;
+			StringBuffer xmlStr;
+			JAXBContext context;
+			JAXBElement<Users> root;
+			Unmarshaller unmarshaller;
 
-			String reponse = tier2.sendMessage(userLogin, friendLogin, userMessage);
+			reponse = tier2.path("sendMessage/" + userLogin + "/" + friendLogin + "/" + userMessage).get(String.class);
+
 			if(reponse.equals("envoyé")){
 				System.out.println("Message envoyé");
 			} else if(reponse.equals("quitter")){
