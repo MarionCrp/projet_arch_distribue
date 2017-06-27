@@ -613,6 +613,7 @@ public class ClientWebService {
 		// lastMessage = tafonction();
 		// résultat du type
 		// System.out.println(messageTime+" - "+authorUserName+" : "+lastMessageInBase);
+		lastMessage = tier2.lastMessages(userLogin, friendUserName);
 
 		form_4_SendMessage(userLogin, friendUserName, lastMessage);
 	}
@@ -640,10 +641,13 @@ public class ClientWebService {
 			System.out.println("Votre message : ");
 			userMessage = scanner.nextLine();
 
-			Boolean reponse = tier2.sendMessage(userLogin, friendLogin, userMessage);
-			if(reponse){
+			String reponse = tier2.sendMessage(userLogin, friendLogin, userMessage);
+			if(reponse.equals("envoyé")){
 				System.out.println("Message envoyé");
-			} else {
+			} else if(reponse.equals("quitter")){
+				System.out.println("Retour au menu principal");
+			}
+			else {
 				System.out.println("Une erreur est survenue, le message n'a pas été enregistré");
 			}
 		}

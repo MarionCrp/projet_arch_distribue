@@ -12,9 +12,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,6 +33,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -516,7 +523,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					NodeList id_nodes = doc.getElementsByTagName("id");
 					if(id_nodes.getLength() > 0){
 						xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
-						System.out.println(xml_last_id);
+						//System.out.println(xml_last_id);
 					}
 				}
 				else {
@@ -527,14 +534,14 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					doc.appendChild(rootElement);
 				}
 				
-				//On récupère tous les noeufs "user"
+				//On récupère tous les noeuds "user"
 				NodeList users_nodes = doc.getElementsByTagName("user");
 				Element conversation = null;
 				Element messages = null;
 				for(int i = 0; i < users_nodes.getLength(); i++){
 					Element parent = (Element) users_nodes.item(i).getParentNode();
 					
-					// On chèque si l'un des user est le current_user.
+					// On check si l'un des user est le current_user.
 					// Si oui, on verifie si le deuxième user est le destinataire du message.
 					// Si oui, on assigne la conversation, sinon on en créé une.
 					if (parent.getElementsByTagName("user").item(0).getTextContent().equals(user_login)){
@@ -616,6 +623,89 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				e.printStackTrace();
 			}
 			return false;
+		}
+		
+		public TreeMap<Date, String> getLastTenMessages(String userLogin, String friendLogin) throws RemoteException {
+			TreeMap<Date,String> last_ten_messages = new TreeMap<Date, String>();
+			
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder;
+			
+			try {
+				docBuilder = docFactory.newDocumentBuilder();
+				// Find or Create XML
+				StreamResult result;
+				File xml = new File("conversations.xml");
+				Document doc;
+				Element rootElement;
+				
+				if(xml.exists()){
+					result = new StreamResult(xml);
+					doc = docBuilder.parse(xml);
+					rootElement = (Element) doc.getElementsByTagName("conversations").item(0);
+					
+					/*------ RECUPERATION DE TOUS LES MESSAGES D'UNE CONVERSATION -------*/
+					//On récupère tous les noeuds "user"
+					NodeList user_nodes = rootElement.getElementsByTagName("user");
+					Element conversation = null;
+					Element messages = null;
+					for(int i = 0; i < user_nodes.getLength(); i++){
+						Element users = (Element) user_nodes.item(i).getParentNode();
+						// On check si l'un des user est le current_user.
+						// Si oui, on verifie si le deuxième user est le destinataire du message.
+						if (users.getElementsByTagName("user").item(0).getTextContent().equals(userLogin)){
+							if (users.getElementsByTagName("user").item(1).getTextContent().equals(friendLogin)){
+								conversation = (Element) users.getParentNode();
+								messages = (Element) conversation.getElementsByTagName("messages").item(0);
+							}
+						} else if (users.getElementsByTagName("user").item(1).getTextContent().equals(userLogin)){
+							if (users.getElementsByTagName("user").item(0).getTextContent().equals(friendLogin)){
+								conversation = (Element) users.getParentNode();
+								messages = (Element) conversation.getElementsByTagName("messages").item(0);
+							}
+						}
+					}
+					
+					// On récupère les noeuds "message"
+					NodeList message_nodes = messages.getElementsByTagName("message");
+					
+					// On initialise une variable pour la valeur initiale de la variable d'incrémentation
+					// S'il y a moins de 10 messages, on l'initialise à 0 : on récupère tous les messages
+					// S'il y a plus de 10 messages, on initialise au nb de messages -10, pour récupérer que les 10 derniers
+					int loop_origin = 0;
+					if (message_nodes.getLength() > 10){
+						loop_origin = message_nodes.getLength()-10;
+					}
+					for (int j = loop_origin ; j < message_nodes.getLength(); j++){
+						Element message = (Element) message_nodes.item(j);
+						DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+						Date datetime = df.parse(message.getElementsByTagName("created_at").item(0).getTextContent());
+						String content = message.getElementsByTagName("content").item(0).getTextContent();
+						String author = message.getElementsByTagName("author").item(0).getTextContent();
+						last_ten_messages.put(datetime, author.toUpperCase() + " : " + content);
+					}
+					
+				}
+				
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (DOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			return last_ten_messages;
 		}
 		
 	

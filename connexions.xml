@@ -28,4 +28,11 @@
     <state>accepted</state>
     <date>Mon Jun 26 21:02:19 CEST 2017</date>
   </connexion>
+<connexion>
+    <id>5</id>
+    <sender_login>elodie</sender_login>
+    <recipient_login>kevin</recipient_login>
+    <state>accepted</state>
+    <date>Tue Jun 27 11:33:09 CEST 2017</date>
+  </connexion>
 </connexions>

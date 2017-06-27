@@ -2,7 +2,9 @@ package messagerie;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.ws.rs.GET;
@@ -173,16 +175,42 @@ public class Tier2 {
 		}
 	}
 	
-	public Boolean sendMessage(String current_user_login, String friend_login, String content){
+	public String sendMessage(String current_user_login, String friend_login, String content){
 		try {
 			Tier3 tier3 = new Tier3Impl();
-			boolean has_been_send = tier3.sendMessage(current_user_login, friend_login, content);
-			return has_been_send;
+			if (! content.equals("QUITTER")){
+				boolean has_been_send = tier3.sendMessage(current_user_login, friend_login, content);
+				if (has_been_send){
+					return "envoyé";
+				}
+			}
+			else {
+				return "quitter";
+			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		return null;
+	}
+	
+	public String lastMessages(String userLogin, String friendLogin){
+		String lastMessage ="";
+				
+		try {
+			Tier3 tier3 = new Tier3Impl();
+			TreeMap<Date, String> last_ten_messages = new TreeMap<Date, String>();
+			last_ten_messages = tier3.getLastTenMessages(userLogin, friendLogin);
+			
+			for (Date datetime : last_ten_messages.keySet()){
+				System.out.println(datetime + " - " + last_ten_messages.get(datetime));
+				lastMessage = last_ten_messages.get(datetime);
+			}
+		} catch (RemoteException e) {
+			System.out.println("pb dans la fonction lastMessage du Tier2");
+			e.printStackTrace();
+		}		
+		return lastMessage;
 	}
 
 }

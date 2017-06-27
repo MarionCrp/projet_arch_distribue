@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<conversations>
+  <conversation>
+    <id>1</id>
+    <start_date>Tue Jun 27 11:31:15 CEST 2017</start_date>
+    <users>
+      <user>elodie</user>
+      <user>marion</user>
+    </users>
+    <messages>
+      <message>
+        <created_at>Tue Jun 27 11:31:15 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>test</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 11:32:37 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>quitter</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 11:32:44 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>QUITTER</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 18:31:15 CEST 2017</created_at>
+        <author>elodie</author>
+        <content/>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 18:31:25 CEST 2017</created_at>
+        <author>elodie</author>
+        <content/>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 18:50:05 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>encore un test</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 18:50:25 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>test de 18h50</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 18:50:29 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>QUITTER</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 18:53:15 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>QUITTER</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:04:41 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>10ème message</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:04:54 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>11 ème message</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:12:46 CEST 2017</created_at>
+        <author>marion</author>
+        <content>12 ème message</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:17:07 CEST 2017</created_at>
+        <author>marion</author>
+        <content>13ème message</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:24:56 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>encore un message (14 ème)</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:26:10 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>Et encore un test (15)</content>
+        <read>false</read>
+      </message>
+    <message>
+        <created_at>Tue Jun 27 19:30:53 CEST 2017</created_at>
+        <author>elodie</author>
+        <content>teeeeeeeest</content>
+        <read>false</read>
+      </message>
+    </messages>
+  </conversation>
+<conversation>
+    <id>2</id>
+    <start_date>Tue Jun 27 14:28:12 CEST 2017</start_date>
+    <users>
+      <user>kevin</user>
+      <user>elodie</user>
+    </users>
+    <messages>
+      <message>
+        <created_at>Tue Jun 27 14:28:12 CEST 2017</created_at>
+        <author>kevin</author>
+        <content>test</content>
+        <read>false</read>
+      </message>
+    </messages>
+  </conversation>
+</conversations>
