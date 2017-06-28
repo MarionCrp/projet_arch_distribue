@@ -78,25 +78,26 @@ public class Tier2 {
         // Appel RMI
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
-	        //Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-	        Tier3 tier_3 = new Tier3Impl();
+	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+	        //Tier3 tier_3 = new Tier3Impl();
 			User searched_user = tier_3.find_user(login);
+			System.out.println(searched_user);
 	 		if(searched_user == null){
-	 			return "Cet utilisateur n'existe pas";
-	 			//return "false";
+	 			System.out.println("Cet utilisateur n'existe pas");
+	 			return "false";
 	 		} else {
 	 	        if(searched_user.getPassword().equals(password)){
-	 	        	return "Connecté avec succès";
-	 	        	//return "true";
+	 	        	System.out.println("Connecté avec succès");
+	 	        	return "true";
 	 	        } else {
 	 	        	// TODO Envoyer message : "Connexion impossible";
-	 	        	return "Le mot de passe est incorrect";
-	 	        	//return "false";
+	 	        	System.out.println("Le mot de passe est incorrect");
+	 	        	return "false";
 	 		    }
 	 		}
 		} catch (Exception e){
-			return "Une erreur est survenue";
-			//return "false";
+			e.printStackTrace();
+			return "false";
 		}
 		
 	}

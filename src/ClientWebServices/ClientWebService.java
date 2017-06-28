@@ -239,13 +239,12 @@ public class ClientWebService {
 			JAXBContext context;
 			JAXBElement<User> root;
 			Unmarshaller unmarshaller;
-
-			System.out.println("Toto sign in");
 			
-			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
-			//Tier2 tier2bis = new Tier2();
-			//reponse = tier2bis.connexion(userLogin, userPassword);
-			System.out.println(tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class));
+			//reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
+			Tier2 tier2bis = new Tier2();
+			reponse = tier2bis.connexion(userLogin, userPassword);
+			System.out.println(reponse);
+			//System.out.println(tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class));
 			if (Boolean.parseBoolean(reponse)) {
 				System.out.println("Connexion réussie");
 				current_user = new User(userLogin, userPassword);
