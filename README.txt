@@ -28,6 +28,8 @@ Fonctionnalités réalisées :
 
 Ce qui ne fonctionne pas :
 - Le clientCorba
-- Le tier2 n'accède pas au Tier3 pas. (removeFirst???)
+- Le tier2 n'accède pas au Tier3 pas.
 
 N'arrivant pas à faire fonctionner la communication à distance entre le tier2 et le tier3, et n'ayant plus le temps, nous n'avons pas pu mettre en place la gestion des threads.
+
+Le code actuel tentait de faire communiquer tier2 et tier3. 
