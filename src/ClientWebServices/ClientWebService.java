@@ -100,9 +100,7 @@ public class ClientWebService {
 			form_2_SignIn(userLogin, userPassword);
 			break;
 		case 3:
-			System.out
-					.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
-			System.exit(0);
+			sign_out(userLogin);
 		}
 	}
 
@@ -313,9 +311,7 @@ public class ClientWebService {
 		// On redirige vers la bonne fonction selon la réponse
 		switch (userResponse) {
 		case 0:
-			System.out
-					.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
-			System.exit(0);
+			sign_out(userLogin);
 		case 1:
 			menu_3_FriendsList(userLogin);
 			break;
@@ -404,9 +400,7 @@ public class ClientWebService {
 			}
 
 			if (userResponse == 0) {
-				System.out
-						.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
-				System.exit(0);
+				sign_out(userLogin);
 			} else if (userResponse == 1) {
 				menu_2_MenuPrincipal(userLogin);
 			} else {
@@ -583,9 +577,7 @@ public class ClientWebService {
 		}
 
 		if (userResponse == 0) {
-			System.out
-					.println("L'application s'est correctement arrêtée, à bientôt DansTonChat !");
-			System.exit(0);
+			sign_out(userLogin);
 		} else if (userResponse == 1) {
 			menu_2_MenuPrincipal(userLogin);
 		} else {
@@ -713,5 +705,11 @@ public class ClientWebService {
 			thread.quitter();
 			menu_2_MenuPrincipal(userLogin);
 		}
+	}
+	
+	public static void sign_out(String userLogin) {
+		String reponse = tier2.path("sign_out/" + userLogin).get(String.class);
+		System.out.println(reponse);
+		System.exit(0);
 	}
 }

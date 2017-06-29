@@ -16,6 +16,11 @@ import model.Users;
 
 public interface Tier3 extends Remote{
 	
+	// SIGN IN / SIGN OUT
+	public void sign_in(User user) throws RemoteException;
+	
+	public void sign_out(User user) throws RemoteException;
+	
 	// USERS 
 	public User find_user(String login) throws RemoteException;
 	

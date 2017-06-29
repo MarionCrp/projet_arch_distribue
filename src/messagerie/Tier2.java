@@ -88,6 +88,7 @@ public class Tier2 {
 	 		} else {
 	 	        if(searched_user.getPassword().equals(password)){
 	 	        	System.out.println("Connecté avec succès");
+	 	        	tier_3.sign_in(searched_user);
 	 	        	return "true";
 	 	        } else {
 	 	        	// TODO Envoyer message : "Connexion impossible";
@@ -231,6 +232,21 @@ public class Tier2 {
 		Conversation conv = lastTenMessages(current_user_login, friendLogin);
 		
 		return conv.getLastMessage();
+	}
+	
+	public String sign_out(@PathParam("current_user") String current_user){
+		try {
+			Tier3 tier3 = new Tier3Impl();
+			User user = tier3.find_user(current_user);
+			if(user != null){
+				tier3.sign_out(user);
+				return "L'application s'est correctement arrêtée, à bientôt DansTonChat !";
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Une erreur est survenue";
 	}
 
 }
