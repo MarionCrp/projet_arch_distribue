@@ -39,15 +39,10 @@ public class ClientWebService {
 	public static void main(String args[]) throws Exception {
 
 		// Connexion à Tier2 - service "controleur" de marion
-		tier2 = Client.create().resource("http://localhost:8080/Messagerie"); // new Tier2(); // 
+		tier2 = Client.create().resource("http://localhost:8080/Messagerie");
 
 		// Lancement de l'application
 		menu_1_SignUp_Or_SignIn();
-	}
-
-	public static void connexion() {
-		// Connexion à Tier2 - service "controleur" de marion
-		// tier2 = Client.create().resource("http://localhost:8080/Messagerie");
 	}
 
 	// Choix entre se connecter et s'inscrire
@@ -238,11 +233,7 @@ public class ClientWebService {
 			JAXBElement<User> root;
 			Unmarshaller unmarshaller;
 			
-			//reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
-			Tier2 tier2bis = new Tier2();
-			reponse = tier2bis.connexion(userLogin, userPassword);
-			System.out.println(reponse);
-			//System.out.println(tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class));
+			reponse = tier2.path("connexion/" + userLogin + "/" + userPassword).get(String.class);
 			if (Boolean.parseBoolean(reponse)) {
 				System.out.println("Connexion réussie");
 				current_user = new User(userLogin, userPassword);
@@ -588,7 +579,6 @@ public class ClientWebService {
 
 			try {
 				reponse = tier2.path("acceptFriendRequest/" + current_user.getLogin() + "/" + friend).get(String.class);
-				//boolean is_accepted = tier2.acceptFriendRequest(current_user.getLogin(), friend);
 				if(Boolean.parseBoolean(reponse)){
 					System.out.println(friend
 							+ " a été ajouté(e) à votre liste d'amis.");

@@ -25,10 +25,6 @@ import model.Users;
 
 @Path("/")
 public class Tier2 {
-	//private static final HashMap<String,String> conditions;
-
-	//private static final HashMap<String,Integer> temperatures;
-
 	private static User current_user;
 	//private static Users users;
 
@@ -42,27 +38,23 @@ public class Tier2 {
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
 			
-	         Tier3 tier_3 = new Tier3Impl(); //(Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+	         Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 	         
 	         User searched_user = tier_3.find_user(login);
 
 	         
 	         if(searched_user != null){
-	 			//return "Un utilisateur existe déjà avec ce login";
 	        	 return "false";
 	 		} else {
-	 			// Elodie : Ajout de l'utilisateur dans le txt.
+	 			// Ajout de l'utilisateur dans le txt.
 	 	        if(tier_3.add_new_user(login, password)){
-	 	      	 	// return "Votre inscription a bien été prise en compte";
 	 	        	return "true";
 	 	        } else {
-	 				//return "Une erreur est survenue lors de l'inscription";
 	 	        	return "false";
 	 		    }
 	 		}
 		} catch (Exception e){
 			System.out.println(e);
-			//return "Une erreur est survenue";
 			return "false";
 		}
 	}
@@ -79,7 +71,6 @@ public class Tier2 {
 		// localhost chez nous sinon ip du serveur. Messagerie = Interface de la bdd
 		try {
 	        Tier3 tier_3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
-	        //Tier3 tier_3 = new Tier3Impl();
 			User searched_user = tier_3.find_user(login);
 			System.out.println(searched_user);
 	 		if(searched_user == null){
@@ -91,7 +82,6 @@ public class Tier2 {
 	 	        	tier_3.sign_in(searched_user);
 	 	        	return "true";
 	 	        } else {
-	 	        	// TODO Envoyer message : "Connexion impossible";
 	 	        	System.out.println("Le mot de passe est incorrect");
 	 	        	return "false";
 	 		    }
@@ -103,34 +93,34 @@ public class Tier2 {
 		
 	}
 	
+	// Affiche la liste des amis (des connexions dont l'état est "accepted")
 	@GET
 	@Path("friends_list/{current_user_login}")
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	public Users friends_list (@PathParam("current_user_login") String current_user_login) 
 	{
-		Tier3 tier3;
 		try {
-			tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			Users users = tier3.friends_list(current_user_login);
 			return users;
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
+	// Affiche la liste des utilisateurs (aucune connexion envoyée/ demandée ou annulée).
 	@GET
 	@Path("users/{current_user_login}")
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	public Users users_list (@PathParam("current_user_login") String current_user_login) 
 	{
-		Tier3 tier3;
 		try {
-			tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			Users users = tier3.users_list(current_user_login);
 			return users;
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -138,60 +128,63 @@ public class Tier2 {
 
 	}
 
-	
+	// Envoie d'une demande de connexion à un utilisateur
 	@GET
 	@Path("addFriend/{current_user_login}/{friendLogin}")
 	@Produces("text/plain")
-	public boolean addFriend(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin) {
+	public String addFriend(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin) {
 		try {
-			Tier3 tier3 = new Tier3Impl();
-			return tier3.addFriend(current_user_login, friendLogin);
-		} catch (RemoteException e) {
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
+			return String.valueOf(tier3.addFriend(current_user_login, friendLogin));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
+			return "false";
 		}
 	}
 	
+	// Liste des demandes de connexion
 	@GET
 	@Path("friend_requests_list/{current_user_login}")
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	public Users friend_requests_list (@PathParam("current_user_login") String current_user_login) 
 	{
-		Tier3 tier3;
 		try {
-			tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			Users users = tier3.friend_requests_list(current_user_login);
 			return users;
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
 
 	}
-
+	
+	
+	// Validation d'une demande de connexion
 	@GET
 	@Path("acceptFriendRequest/{current_user_login}/{friendLogin}")
 	@Produces("text/plain")
-	public Boolean acceptFriendRequest(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin) {
+	public String acceptFriendRequest(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friendLogin) {
 		try {
-			Tier3 tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			boolean has_been_accepted = tier3.acceptFriend(current_user_login, friendLogin);
-			return has_been_accepted;
-		} catch (RemoteException e) {
+			return String.valueOf(has_been_accepted);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
+			return "false";
 		}
 	}
 	
+	// Envoie d'un message à un utilisateur
 	@GET
 	@Path("sendMessage/{current_user_login}/{friendLogin}/{content}")
 	@Produces("text/plain")
 	public String sendMessage(@PathParam("current_user_login") String current_user_login, @PathParam("friendLogin") String friend_login, @PathParam("content") String content){
 		try {
-			Tier3 tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			if (! content.equals("QUITTER")){
 				boolean has_been_send = tier3.sendMessage(current_user_login, friend_login, content);
 				if (has_been_send){
@@ -201,30 +194,31 @@ public class Tier2 {
 			else {
 				return "quitter";
 			}
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
+	// Affichage des 10 derniers messages d'une relation entre deux utilisateurs
 	@GET
-	@Path("friend_requests_list/{current_user_login}/{friendLogin}")
+	@Path("lastTenMessages/{current_user_login}/{friendLogin}")
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
 	public Conversation lastTenMessages(@PathParam("current_user_login") String userLogin, @PathParam("friendLogin") String friendLogin){
 		Conversation last_ten_messages = new Conversation();
 				
 		try {
-			Tier3 tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			last_ten_messages = tier3.getLastTenMessages(userLogin, friendLogin);
 
-		} catch (RemoteException e) {
-			System.out.println("pb dans la fonction lastMessage du Tier2");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}		
 		return last_ten_messages;
 	}
 	
+	// Le dernier message d'une conversation entre deux utilisateurs (utilisé dans le messageListener fait par Kévin).
 	@GET
 	@Path("lastMessage/{current_user_login}/{friendLogin}")
 	@Produces( { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON } )
@@ -234,15 +228,19 @@ public class Tier2 {
 		return conv.getLastMessage();
 	}
 	
+	// Déconnexion
+	@GET
+	@Path("sign_out/{current_user_login}/{friendLogin}")
+	@Produces("text/plain")
 	public String sign_out(@PathParam("current_user") String current_user){
 		try {
-			Tier3 tier3 = new Tier3Impl();
+			Tier3 tier3 = (Tier3) Naming.lookup("rmi://localhost:2000/Tier3");
 			User user = tier3.find_user(current_user);
 			if(user != null){
 				tier3.sign_out(user);
 				return "L'application s'est correctement arrêtée, à bientôt DansTonChat !";
 			}
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

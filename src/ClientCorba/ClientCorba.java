@@ -1,15 +1,17 @@
 package ClientCorba;
 
 import java.util.Properties;
+
+import messagerie.Tier2;
+
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 
-//import communication.ServiceCommunication;
 
 public class ClientCorba {
 
-	//private ServiceCommunication tier2 = null;
+	private Tier2 tier2 = null;
 	
 	public static void main(String[] args) throws Exception {
 		connexion();
@@ -25,6 +27,6 @@ public class ClientCorba {
 		//org.omg.CORBA.Object namingServiceRef = requestBroker.resolve_initial_references("NameService");
 		//NamingContextExt namingContext = NamingContextExtHelper.narrow(namingServiceRef);
 
-		//ServiceCommunication tier2 = ServiceCommunicationHelper.narrow(namingContext.resolve_str("ServiceCommunication"));
+		//Tier2 tier2 = ServiceCommunicationHelper.narrow(namingContext.resolve_str("Tier2"));
 	}
 }

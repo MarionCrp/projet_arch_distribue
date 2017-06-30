@@ -23,7 +23,7 @@ public class messageListener extends Thread{
 			try {
 		    	  
 				if(user1!="" && user2!=""){
-					//MARION -- ON RECUPERE LE DERNIER MESSAGE EN BASE pour cette conversation
+					//ON RECUPERE LE DERNIER MESSAGE EN BASE pour cette conversation
 					//user1 et user2 te permettent d'avoir les noms d'utilisateur pour savoir dans quelle conversation regarder
 					lastMessageInBase = tier2.lastMessage(user1, user2); //on récupère le dernier message de la conversation
 					lastMessageInBaseContent = lastMessageInBase.getContent();

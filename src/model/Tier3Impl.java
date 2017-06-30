@@ -52,13 +52,17 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 	
 	private static Integer c_id = 0;
 	
+	// Liste des utilisateurs connectés
 	private List<User> ListUsers = new ArrayList<User>();
+	
+	// Liste des messages envoyés qui sont en attente d'affichage par l'utilisateur
 	private List<Message> ListMessages = new ArrayList<Message>();
 	
 	public Tier3Impl() throws RemoteException {
 		
 	}
 	
+	// Connexion de tier3
 	public static void main(String[] arg) {
 		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 		try {
@@ -72,12 +76,11 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		
 	}
 
-
-
 	public void run() {
 	
 	}
 	
+	// Ajout d'un utilisateur dans la liste des Threads
 	public void sign_in(User user) throws RemoteException
 	{
 		synchronized(ListUsers)
@@ -90,6 +93,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 	}
 	
+	// Suppression d'un utilisateur dans la liste des thread
 	public void sign_out(User user) throws RemoteException
 	{
 		synchronized(ListUsers)
@@ -99,6 +103,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 	}
 	
+	// Ajout d'un nouvel utilisateur inscrit dans la base de données.
 	@Override
 	public boolean add_new_user(String login, String password) throws RemoteException {
 		synchronized(ListUsers){
@@ -108,7 +113,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 					DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 					
-					// Find or Create XML
+					//  On utilise un fichier users.xml déjà présent ou on le créé.
 					StreamResult result;
 					File xml = new File("users.xml");
 					Document doc;
@@ -127,6 +132,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 						doc.appendChild(rootElement);
 					}
 					
+					// On créé l'élément xml "user" pour l'utilisateur inscrit
 					Element user = doc.createElement("user");
 					Element user_login = doc.createElement("login");
 					Element user_password = doc.createElement("password");
@@ -137,7 +143,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					user.appendChild(user_login);
 					user.appendChild(user_password);
 						
-					// write the content into xml file
+					//On l'ajoute dans le fichier xml.
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 					Transformer transformer = transformerFactory.newTransformer();
 					transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -159,7 +165,9 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			}
 		}
 	}
-
+	
+	
+	// On récupère un utilisateur dans la base d'après son login
 	@Override
 	public User find_user(String login) throws RemoteException {
 		synchronized(ListUsers){
@@ -167,7 +175,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 				
-				// Find or Create XML
+				// On cherche dans le fichier users.xml
 				StreamResult result;
 				File xml = new File("users.xml");
 				Document doc;
@@ -179,6 +187,8 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					rootElement = (Element) doc.getElementsByTagName("users").item(0);
 					
 					NodeList logins = doc.getElementsByTagName("login");
+					
+					// Lorsqu'on trouve l'utilisateur correspondant au login demandé, on le retourne
 					for(int i = 0; i < logins.getLength(); i++){
 						if(logins.item(i).getTextContent().equals(login)){						
 							Element parent = (Element) logins.item(i).getParentNode();
@@ -196,8 +206,8 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 	}
 	
+	// Liste des utilisateurs qui ne sont pas ami avec l'utilisateur connecté, ni dont la connexion n'a pas été acceptée
 	@Override
-	// Users List = All users - friend - denied connexion.
 	public Users users_list(String current_user_login) throws RemoteException {
 		synchronized(ListUsers){
 			Users listUsers = new Users();
@@ -206,13 +216,13 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			try {
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 				
-				// Find or Create XML
+				// On cherche dans le fichier users.xml
 				StreamResult result;
 				File user_xml = new File("users.xml");
 				Document doc;
 				Element rootElement;
 				
-				// On récupère toutes les relations déjà créée (quelque soit l'état), pour ne pas faire de doublon.
+				// On récupère la liste des utilisateurs en relations déjà créées avec l'utilisateur (quelque soit l'état), pour ne pas créer de doublon.
 				Users already_connected_users = users_from_connexion(current_user_login);
 				
 				if(user_xml.exists()){
@@ -220,11 +230,16 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					doc = docBuilder.parse(user_xml);
 					
 					NodeList logins = doc.getElementsByTagName("login");
+					
+					// On boucle sur la liste de tous les utilisateurs inscrits
 					for(int i = 0; i < logins.getLength(); i++){
 						String user_login = logins.item(i).getTextContent();
+						// On exclu le current_user de sa propre liste.
 						if(!user_login.equals(current_user_login)){
+							// Si la liste est vide on l'ajoute dans la liste des utilisateurs non connecté à afficher
 							if(already_connected_users == null){
 								listUsers.addUser(logins.item(i).getTextContent());
+						    // On exclu les utilisateurs déjà connecté avec l'utilisateur actuel. 
 							} else {
 								if(!already_connected_users.liste.contains(user_login)){
 									listUsers.addUser(logins.item(i).getTextContent());
@@ -232,9 +247,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 							}
 						}
 					}
-					
-					// TODO : Enlever les utilisateurs qui sont déjà connecté à l'utilisateur.
-	
+
 					return listUsers;
 				}
 			
@@ -246,6 +259,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 	}
 	
+	// Liste des utilisateurs connectés à l'utilisateur actuel
 	@Override
 	public Users friends_list(String current_user_login) throws RemoteException {
 		synchronized(ListUsers){
@@ -255,7 +269,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			try {
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 				
-				// Find or Create XML
+				// On cherche dans "connexions.xml"
 				StreamResult result;
 				File xml = new File("connexions.xml");
 				Document doc;
@@ -267,8 +281,12 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
 					
 					NodeList connections_id = doc.getElementsByTagName("id");
+
+					// On boucle dans la liste des connexions
 					for(int i = 0; i < connections_id.getLength(); i++){
 						Element parent = (Element) connections_id.item(i).getParentNode();
+						
+						// On ne sélectionne que les connexion relatives à l'utilisateur actuel, et dont l'état est "accepté".
 						if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
 							if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("accepted")){
 								listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
@@ -290,6 +308,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 	}
 	
+	// La liste des connexions dont l'état est "pending" et dont le destinataire est l'utilisateur actuel. 
 	@Override
 	public Users friend_requests_list(String current_user_login) throws RemoteException {
 		synchronized(ListUsers){
@@ -299,7 +318,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			try {
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 				
-				// Find or Create XML
+				// On cherche dans le fichier connexions.xml
 				StreamResult result;
 				File xml = new File("connexions.xml");
 				Document doc;
@@ -313,6 +332,8 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					NodeList connections_id = doc.getElementsByTagName("id");
 					for(int i = 0; i < connections_id.getLength(); i++){
 						Element parent = (Element) connections_id.item(i).getParentNode();
+						
+						// On récupère les connexions dont l'état est "pending" et dont le destinataire est l'utilisateur actuel. 
 						if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
 							if(parent.getElementsByTagName("state").item(0).getTextContent().toLowerCase().equals("pending")){
 								listUsers.addUser(parent.getElementsByTagName("sender_login").item(0).getTextContent());
@@ -329,13 +350,16 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		}
 	}
 	
+	
+	// On fait une requête de connexions : création d'un élément "connexion" dans le xml.
 	public boolean addFriend(String user_login, String friend_login) throws RemoteException {
 		synchronized(ListUsers) {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder;
 			try {
 				docBuilder = docFactory.newDocumentBuilder();
-				// Find or Create XML
+				
+				// On cherche dans le connexions.xml ou on le créé
 				StreamResult result;
 				File xml = new File("connexions.xml");
 				Document doc;
@@ -350,7 +374,6 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					NodeList id_nodes = doc.getElementsByTagName("id");
 					if(id_nodes.getLength() > 0){
 						xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
-						System.out.println(xml_last_id);
 					}
 				}
 				else {
@@ -361,6 +384,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					doc.appendChild(rootElement);
 				}
 				
+				// Création de l'élément connexion
 				Element connexion = doc.createElement("connexion");
 				Element connexion_id = doc.createElement("id");
 				Element sender_login = doc.createElement("sender_login");
@@ -382,7 +406,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				connexion.appendChild(state);
 				connexion.appendChild(connexion_date);
 				
-				// write the content into xml file
+				// On l'écrit dans le xml.
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -411,7 +435,8 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			DocumentBuilder docBuilder;
 			try {
 				docBuilder = docFactory.newDocumentBuilder();
-				// Find or Create XML
+
+				// On cherche dans le fichier connexions.xml
 				StreamResult result;
 				File xml = new File("connexions.xml");
 				Document doc;
@@ -422,10 +447,13 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					doc = docBuilder.parse(xml);
 					rootElement = (Element) doc.getElementsByTagName("connexions").item(0);
 					NodeList current_user_requests = doc.getElementsByTagName("recipient_login");
+					
 					for(int i = 0; i < current_user_requests.getLength(); i++){
 						Element parent = (Element) current_user_requests.item(i).getParentNode();
+						// On filtre : le destinataire doit être l'utilisateur actuel, et l'envoyeur doit être l'utilisateur envoyé en second paramètre
 						if (parent.getElementsByTagName("recipient_login").item(0).getTextContent().equals(current_user_login)){
 							if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(friend_login)){
+								// On change l'état de la connexion en "accepted".
 								parent.getElementsByTagName("state").item(0).setTextContent("accepted");
 							}
 						}
@@ -435,7 +463,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					return false;
 				}
 				
-				// write the content into xml file
+				// On met à jour le xml.
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -464,7 +492,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				try {
 					DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 					
-					// Find or Create XML
+					// On cherche dans le xml "connexions.xml"
 					StreamResult result;
 					File xml = new File("connexions.xml");
 					Document doc;
@@ -479,6 +507,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 						for(int i = 0; i < connections_id.getLength(); i++){
 							Element parent = (Element) connections_id.item(i).getParentNode();
 							
+							// Lorsque l'utilisateur est l'auteur de la connexion on récupère le destinataire et inversement.
 							if (parent.getElementsByTagName("sender_login").item(0).getTextContent().equals(current_user_login)){
 								listUsers.addUser(parent.getElementsByTagName("recipient_login").item(0).getTextContent());
 							}
@@ -498,14 +527,14 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 		
 		
 		// MESSAGES
-		
+		// Ajout d'un nouveau message dans le xml.
 		public boolean sendMessage(String user_login, String friend_login, String content) throws RemoteException {
 			synchronized(ListUsers){
 				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder docBuilder;
 				try {
 					docBuilder = docFactory.newDocumentBuilder();
-					// Find or Create XML
+					// On cherche dans le xml "conversations.xml".
 					StreamResult result;
 					File xml = new File("conversations.xml");
 					Document doc;
@@ -520,7 +549,6 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 						NodeList id_nodes = doc.getElementsByTagName("id");
 						if(id_nodes.getLength() > 0){
 							xml_last_id = Integer.parseInt(id_nodes.item(id_nodes.getLength()-1).getTextContent());
-							//System.out.println(xml_last_id);
 						}
 					}
 					else {
@@ -584,7 +612,8 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 						conversation.appendChild(messages);
 	
 					}
-	
+					
+					// On créé l'élément message
 					Element message = doc.createElement("message");
 	
 					Element message_content = doc.createElement("content");
@@ -604,7 +633,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 					message.appendChild(message_content);
 					message.appendChild(read);
 					
-					// write the content into xml file
+					// On enregistre dans le xml.
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 					Transformer transformer = transformerFactory.newTransformer();
 					transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -623,6 +652,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 			}
 		}
 		
+		// On récupère les dix derniers messages d'une conversation
 		public Conversation getLastTenMessages(String userLogin, String friendLogin) throws RemoteException {
 			synchronized(ListUsers){
 				Conversation last_ten_messages = new Conversation();
@@ -634,7 +664,7 @@ public class Tier3Impl extends UnicastRemoteObject implements Tier3, Runnable{
 				
 				try {
 					docBuilder = docFactory.newDocumentBuilder();
-					// Find or Create XML
+					// On cherche dans le fichier conversations.xml
 					StreamResult result;
 					File xml = new File("conversations.xml");
 					Document doc;
