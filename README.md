@@ -14,6 +14,10 @@ ClientWebService, devrait interragir avec le Tier2 grace à un service web.
 Le tier 2 lui, accède à l'implémentation du tier3 (tier3Impl) en passant par son interface (Tier3) grâce à RMI.
 L'interface est dans le dossier Messagerie, mais l'implémentation se trouve dans le dossier Modèle, avec les classes des différents objets de l'application.
 
+La version actuelle n'est pas fonctionnelle et tend à se rapprocher du travail demandé (ajout de thread et de connexions RMI et Serveur).
+Si vous souhaitez tout de même tester l'application sans ces connexions (tester la persistence des données etc. qui ont représenté tout de même un travail conséquent), vous trouverez le repo distant du projet ici : https://github.com/MarionCrp/projet_arch_distribue
+La dernière version fonctionnelle est la suivante : 06fd14ac (git checkout 06fd14ac).
+
 Ce qui fonctionne :
 Le clientWebService interragit bien grâce à un service Web avec le tier2
 Le tier3 réalise la persistence des données en créant des fichiers xml.
